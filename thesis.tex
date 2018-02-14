@@ -1,0 +1,123 @@
+\documentclass[a4paper, 12pt]{article}
+% Nyelvi beállítások
+%\def\magyarOptions{defaults=hu-min}
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{graphics}
+\usepackage{tikz}
+\usepackage{t1enc}
+\usepackage{mathrsfs}
+\usepackage{mathptm}
+\usepackage{physics}
+\usepackage{times}
+%\usepackage{euler}
+%\usepackage{concrete}
+%\usepackage{newtxtext}
+%\usepackage{newtxmath}
+\usepackage{appendix}
+\usepackage[nottoc,numbib]{tocbibind}
+\usepackage{geometry}
+ 
+% Sorköz és teljes oldalas kitöltés
+\linespread{1.3}
+\usepackage{fullpage}
+
+% Hiperlinkek
+\usepackage[pdfauthor={},pdftitle={}]{hyperref}
+\hypersetup{colorlinks=true, linkcolor=blue, citecolor=red, filecolor=magenta, 
+            urlcolor=cyan, linktocpage=true}
+
+% Sorszámozás            
+%\renewcommand{\thesection}{\thechapter.\arabic{section}}
+%\numberwithin{equation}{section}
+
+
+% Tételek, definíciók
+%\swapnumbers
+\newtheorem{lem}{Lemma}[section]
+\newtheorem{theo}[lem]{Theorem}
+\newtheorem{state}[lem]{Proposition}
+\newtheorem{defin}[lem]{Definition}
+\newtheorem{note}[lem]{Note}
+\newtheorem{example}[lem]{Example}
+\newtheorem{corollary}[lem]{Corollary}
+\newtheorem{remark}[lem]{Remark}
+
+% Megjegyzésekhez, amik nem szerepelnek majd végül a pdf-ben
+\newcommand{\ignore}[1]{}
+
+% Speciális jelölések
+\newcommand{\simp}{\mathop{\mathrm{Simp}}}
+\newcommand{\graph}{\mathop{\mathrm{graph}}}
+\newcommand{\dom}{\mathop{\mathrm{dom}}}
+
+% Tartalomjegyzék mélysége
+\setcounter{tocdepth}{4}
+%\renewcommand{\bibliofont}{\normalsize}
+\addto\captionsenglish{\renewcommand{\refname}{Bibliography}}
+
+% másik qed: ezt használom azokra a tételekre, amiket nem fogok bizonyítani
+\newcommand*{\qedb}{\hfill\ensuremath{\blacksquare}}
+
+% Irodalomjegyzék
+\usepackage[backend=bibtex,
+backref=true,
+style=alphabetic,
+citestyle=alphabetic]{biblatex}
+\addbibresource{references}
+
+\begin{document}
+\thispagestyle{empty}
+\newgeometry{
+    top=2.5cm,
+    bottom=2.5cm,
+    outer=2.5cm,
+    inner=2.5cm,
+}
+% Kezdőlap
+\begin{center}\renewcommand\baselinestretch{0.9}
+{\Large \textsc{KTH Royal Institute of Technology}\\} \hrulefill
+\vspace{1.0cm} {\huge \\ Benjámin Martin Seregi \\} \vspace{1cm}
+{\Huge\textsc{On the list coloring of $k$-band buffering cellular graphs}\\ \vspace{0.5cm}}
+{\large\textsc MSc Thesis \\ Degree Project in Electrical Engineering}\\ \vspace{1cm}
+{\large \textit{Examiner}\\
+\vspace{0.2cm}
+Marina Petrova\vspace{1.2cm}}\\
+{\large \textit{Supervisors}\\
+\vspace{0.2cm}
+Dávid Kunszenti-Kovács and Göran Andersson\vspace{1.2cm}}\\
+\begin{figure}[!h]
+\begin{center}
+\resizebox{5.5cm}{!}
+{\includegraphics{KTH_Logotyp_RGB_2013}}
+\end{center}
+\end{figure}
+{\large  Information and Communication Technology \\ \vspace{0.5cm}
+Stockholm, Sweden\\2018}
+\end{center}
+
+\pagebreak
+\pagenumbering{Roman}
+\section*{Acknowledgements}
+%\vspace*{\fill} 
+First of all, I would like to express my deep gratitude to Dávid Kunszenti-Kovács, my thesis supervisor, for his patient guidance.
+
+I would also like to thank my parents for their continuous support throughout my studies.
+%\vspace*{\fill}
+\newpage
+\tableofcontents
+\newpage
+\pagenumbering{arabic}
+\section{Introduction}
+
+\newpage
+\section{Section} 
+
+\newpage
+\printbibliography
+\addcontentsline{toc}{section}{References}
+\end{document}
