@@ -149,10 +149,9 @@ In this section, we introduce the basic notions and definitions that are essenti
 
 From now on we assume that all graphs are connected. We can do it without the loss of generality as all the algorithms and proofs can be repeated for each connected component of a graph.
 
-\subsection{Acyclic orientations of cellular graphs}\label{sec:orientation}
+\subsection{Degree bounded acyclic orientations of cellular graphs}\label{sec:orientation}
 
-% rewrite this
-TODO: !!!rewrite!!! Let $G$ be a cellular graph of an $1$-band buffering cellular network. Find an orientation of $G$ such that the newly constructed directed graph $G'$ does not contain directed cycles such that $d^+(v) \leqslant 3$ ($d^+(v)$ is the indegree of $v$) for all $v \in V(G')$ in polynomial time of the size of $G'$. Construct a polynomial time algorithm that finds a kernel graph in $G'$, that is, an independent set $K \subseteq V(G)$ that satisfies the following: for each node $u \in V(G) \setminus K$ there is a node $v \in K$ such that $(u,v) \in E(G)$.
+In what follows, we construct a special orientation of a cellular graph $G$. This orientation is acyclic, that is, it does not contain directed cycles and satisfies the following degree constraint $\deg^+(v) \leqslant 3$ for all $v \in V(G)$. In addition, we will give a polynomial time algorithm that constructs such orientations in polynomial time. We end this subsection with the generalization of the same results for arbitrary graphs by introducing the Szekeres\---Wilf number of a graph.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -191,7 +190,7 @@ To prove (1), we will obtain a contradiction by assuming that $H$ contains a dir
 What is left to show is that $\deg^+(v) \leqslant 3$. At each step we select a node with no more than $3$ neighbors and those neighbors will be assigned a number that is greater than $f(v)$. Therefore the outdegree of $v$ cannot be larger than $3$.
 \end{proof}
 
-It is easy to see that the proof of this lemma can be transformed into a polynomial time algorithm. In what follows we outline the algorithm (Algorithm \ref{alg:find-acyclic-bounded-orientation}) that is based on the proof of Lemma \ref{lem:bounded-acyclic-orientation} and then we prove that its running time is $O(|V(G)| + |E(G)|)$.
+It is easy to see that the proof of this lemma can be transformed into a polynomial time algorithm. We outline the algorithm (Algorithm \ref{alg:find-acyclic-bounded-orientation}) that is based on the proof of Lemma \ref{lem:bounded-acyclic-orientation} and then we prove that its running time is $O(|V(G)| + |E(G)|)$.
 \begin{algorithm}\label{alg:find-acyclic-bounded-orientation}
  \KwData{A cellular graph $G = (V,E)$}
  \KwResult{An acyclic $3$-bounded orientation of $G$}
@@ -210,9 +209,9 @@ It is easy to see that the proof of this lemma can be transformed into a polynom
    $A := A \cup (v,u)$\;
    }   
  }
- \caption{Constructing an acyclic $3$-bounded orientation of a cellular graph}
+ \caption{Constructing an $3$-bounded acyclic orientation of a cellular graph}
 \end{algorithm}
-\begin{state} Algorithm \ref{alg:find-acyclic-bounded-orientation} has a running time of $O(|V(G)| + |E(G)|)$.
+\begin{state}\label{state:acyclic-complexity-proof} Algorithm \ref{alg:find-acyclic-bounded-orientation} has a running time of $O(|V(G)| + |E(G)|)$.
 \end{state}
 \begin{proof}
 It is enough to prove that "Select $v \in V(G^i)$ such that $\deg(v) \leqslant 3$" can be done in $O(|V(G)|)$ since the rest is obvious. Let us initialize a queue $Q := \lbrace v \mid \deg(v) \leqslant  3\rbrace$ before we start running the algorithm. We pop a node $v$ from $G$ at every iteration and push new ones after the removal of $v$ if there are new nodes in $G$ that satisfy the degree condition. The pop and push methods can be implemented in constant time which completes the proof.
@@ -220,6 +219,34 @@ It is enough to prove that "Select $v \in V(G^i)$ such that $\deg(v) \leqslant 3
 
 It is important to note that the idea of Algorithm \ref{alg:find-acyclic-bounded-orientation} came from \cite{CHROBAK1991243} where the authors proved that every planar graph has a $5$-bounded acyclic orientation. They used the fact that every planar graph has a node with at most $5$ neighbors which follows from Euler's formula.
 
+\begin{note} We would like to note that a more general proposition can be formulated from Lemma \ref{lem:bounded-acyclic-orientation} without assuming that $G$ is cellular. If we can ensure that in each step a node $v$ with $\deg(v) \leqslant k$ can be selected then the algorithm will yield a $k$-bounded acyclic orientation in arbitrary graphs.
+\end{note}
+
+\begin{defin} We say that the Szekeres\---Wilf number of a graph $G$ is $k$ if every subgraph of $G$ contains a node of degree at most $k$. The term $k$-degeneracy is also used in some literature.
+\end{defin}
+
+Immediately follows that if we omit the cellular graph assumption\---having known that the Szekeres\---Wilf number of graph is $k$\---then the arguments of the proof of Lemma \ref{lem:bounded-acyclic-orientation} can be repeated and thus the following lemma holds.
+
+\begin{lem} Let $G$ be any graph such that its Szekeres\---Wilf number is $k$. Then $G$ has a $k$-bounded acyclic orientation. \qed
+\end{lem}
+
+Another interesting question is how to compute the Szekeres\---Wilf number of a graph. The following algorithm \cite{Matula:1983:SOC:2402.322385} computes this number in linear time by repeatedly removing the minimum-degree nodes.
+
+\begin{algorithm}\label{alg:szekeres-wilf-computation}
+ \KwData{An arbitrary graph $G = (V,E)$}
+ \KwResult{The Szekeres\---Wilf number of $G$ in $szw$}
+ $H^{(1)} := G$\;
+ $szw := -1$\;
+ \For{$i\leftarrow 1$ \KwTo $|V(G)|$}{
+  Select $v_i \in V(H^{i})$ such that $\deg(v) = \delta(G)$\;
+  $szw := \max(\deg(v), szw)$\;
+  $V(H^{i+1}) := V(H^{i}) \setminus \lbrace v \rbrace$\;
+ }
+ \caption{Computing the Szekeres\---Wilf number in an arbitrary graph}
+\end{algorithm}
+\begin{proof}
+The linear time is obvious as we iterate through the nodes of $G$. The efficient selection of the minimum-degree node is described in the proof of Proposition \ref{state:acyclic-complexity-proof}. Let $k$ be the Szekeres\---Wilf number of $G$. It is obvious that $szw \leqslant k = \max_{H \subset G} \delta(H)$. To obtain a contradiction assume that $szw < k$. Now let $H$ be the "maximal" subgraph in $G$, that is, $szw < \delta(H) = k$. Let $i$ be the smallest index such that $v_i \in V(H)$. Due to our choice we have $H \subset H_i$. Then $\deg_{H_i}(v_i) = \delta(H_i) \leqslant szw < k = \delta(H) \leqslant \deg_H(v_i)$. However, from $H \subset H_i$, it follows that $\deg_H(v_i) \leqslant \deg_{H_i}(v_i)$ which is a contradiction and therefore $k = szw$ as required.
+\end{proof}
 \section{Cellular graphs are $4$-choosable}\label{sec:4-choosable}
 
 We are about to prove one of our main results, that is, cellular graphs are $4$-choosable. We would like to note that since $G$ is a planar, it follows from Thomassen's theorem \cite{Thomassen:1994:PG:184180.184192} that it is $5$-choosable. It is worth noting that cellular graphs are $3$-colorable \cite{662943} (Theorem 1). However, even with this additional constraint, we still cannot say that if $G$ is planar and $3$-colorable then it is $4$-choosable as a counterexample can be found in \cite{JGT:JGT4}. The counterexample is quite interesting (\cite {JGT:JGT4}, second figure) as it is constructed from a cellular graph; however the author added one extra node and joined it to all of the outer nodes. Due to this step, the resulting graph does not always contain a node of degree $3$ therefore the property of Lemma \ref{lem:degree-constraint} is not true for this construction.
