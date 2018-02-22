@@ -248,6 +248,19 @@ Another interesting question is how to compute the Szekeres\---Wilf number of a 
 The linear time is obvious as we iterate through the nodes of $G$. The efficient selection of the minimum-degree node is described in the proof of Proposition \ref{state:acyclic-complexity-proof}. Let $k$ be the Szekeres\---Wilf number of $G$. It is obvious that $szw \leqslant k = \max_{H \subset G} \delta(H)$. To obtain a contradiction assume that $szw < k$. Now let $H$ be the "maximal" subgraph in $G$, that is, $szw < \delta(H) = k$. Let $i$ be the smallest index such that $v_i \in V(H)$. Due to our choice we have $H \subset H_i$. Then $\deg_{H_i}(v_i) = \delta(H_i) \leqslant szw < k = \delta(H) \leqslant \deg_H(v_i)$. However, from $H \subset H_i$, it follows that $\deg_H(v_i) \leqslant \deg_{H_i}(v_i)$ which is a contradiction and therefore $k = szw$ as required.
 \end{proof}
 
+\subsection{Defective list coloring}
+
+\begin{defin} We say that a graph $G$ is $(k,d)$-colorable if the graph can be colored with $k$ colors such that every color class induces a graph with maximum degree at most $d$.
+\end{defin}
+
+Such colorings are known as \textit{defective} or \textit{improper} coloring since the definition allows the nodes to have at most $d$ neighbors from the same color class. TODO: application
+A classical result from ... cite soda-proc.pdf
+\begin{theo}[Lovász]
+Let $G$ be any graph and $k > 0$ then $G=(V,E)$ is $(k,[\Delta(G)/k])$-colorable in $O(|E|)$ steps.
+\end{theo}
+\begin{proof} Let us consider an arbitrary (not necessarily proper) $k$-coloring of $G$. If this coloring is a $(k,[\Delta(G)/k])$-coloring then we are done otherwise choose a node $v$ that has more than $[\Delta(G)/k]$ neighbors from the same color class. It is obvious that there exists a color class $c$ with at most $[\Delta(G)/k]$ nodes in the neighbor set of $v$. By changing the color class of $v$ to color class $c$, we decrease the monochromatic edges in the coloring by at least one. Therefore we reach a $(k,[\Delta(G)/k])$-coloring in at most $|E|$ steps.
+\end{proof}
+
 \section{$1$-band buffering cellular graphs are $4$-choosable}\label{sec:4-choosable}
 
 We are about to prove one of our main results, that is, cellular graphs are $4$-choosable. We would like to note that since $G$ is a planar, it follows from Thomassen's theorem \cite{Thomassen:1994:PG:184180.184192} that it is $5$-choosable. It is worth noting that cellular graphs are $3$-colorable \cite{662943} (Theorem 1). However, even with this additional constraint, we still cannot say that if $G$ is planar and $3$-colorable then it is $4$-choosable as a counterexample can be found in \cite{JGT:JGT4}. The counterexample is quite interesting (\cite {JGT:JGT4}, second figure) as it is constructed from a cellular graph; however the author added one extra node and joined it to all of the outer nodes. Due to this step, the resulting graph does not always contain a node of degree $3$ therefore the property of Lemma \ref{lem:degree-constraint} is not true for this construction.
