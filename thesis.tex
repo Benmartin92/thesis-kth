@@ -320,7 +320,7 @@ In particular, if $G$ is a cellular graph and $|L(v)| \geqslant 4$ for all $v \i
 \begin{proof}
 Let $G^*$ be the $3$-bounded acyclic orientation of $G$ (Lemma \ref{lem:bounded-acyclic-orientation}), that is, $d^+(v) \leqslant 3$. We apply induction on $|V(G^*)|$. For $|V(G^*)|=0$, the empty coloring is good. Let us assume that we know how to color $G^*$ with $|V(G^*)| < n$ and consider the case when $|V(G^*)|=n$. Let $\alpha$ be any color from one of the colors sets and set $V_\alpha$ to $\lbrace v \in V(G) \mid \alpha \in L(v) \rbrace$. Consider the non-empty subgraph $D$ of $G^*$ that is spanned by $V_\alpha$. Since $G^*$ is a DAG, it is kernel-perfect (Lemma \ref{lem:kernel-lemma}), therefore $D$ has a kernel $U \neq \emptyset$. Assign the color $\alpha$ to every node in $U$ and remove $\alpha$ from $L(v)$ for all $v \in V_\alpha$. Since $U$ is independent, and we removed $\alpha$, it follows that we did not (and we will not) violate the rules of the graph coloring. After that, remove $U$ from $D$, since every node in $V(D) \setminus U$ sends an edge to $U$, having removed $U$ from $D$, we decreased the outdegree of each node in $D$ by $1$. Since the modified lists $L'(v)$ $(v \in V_\alpha)$ satisfy $d^+(v) < |L'(v)|$ for all $v \in V(D) \setminus U$, we can use our induction hypothesis to color $V(G^*) \setminus U$.
 \end{proof}
-\begin{algorithm}[H]\label{alg:four-list-coloring}
+\begin{algorithm}\label{alg:four-list-coloring}
  \KwData{A cellular graph $G$ and a set of colors $L(v)$ for all $v \in V(G)$ with $|L(v)| \geqslant 4$}
  \KwResult{$4$-list coloring of $G$}
   Let $G^*$ be the $3$-bounded acyclic orientation of $G$ (Algorithm \ref{alg:find-acyclic-bounded-orientation})\;
@@ -335,6 +335,7 @@ Let $G^*$ be the $3$-bounded acyclic orientation of $G$ (Lemma \ref{lem:bounded-
   }
  \caption{$4$-list coloring of a cellular graph}
 \end{algorithm}
+
 It can be seen from the algorithm that first we call Algorithm \ref{alg:find-acyclic-bounded-orientation} then we call Algorithm \ref{alg:find-kernel-in-dags} multiple times. If we assume the worst-case scenario when the kernel $U$ has only $1$ element, then the while loop iterates $|V(G)|$ times. The auxiliary operations such as spanning a subgraph or creating the set $V_\alpha$ can be done in linear time. Therefore the overall running time of our algorithm is $O(|V(G)|^2+|V(G)||E(G)|)$.
 
 In each iteration, we color the nodes in $U$ and remove one color. The color is proper by Theorem \ref{alg:four-list-coloring}. However, we need to show that in each iteration every node is either colored or it has a free available color.
@@ -342,6 +343,8 @@ In each iteration, we color the nodes in $U$ and remove one color. The color is 
 \end{lem}
 \begin{proof} To obtain a contradiction, let us suppose that there is a node $v$ that is not colored and it does not have an available color ($|L(v)|=0$). This means that $v$ was in $V_{\alpha}$ for at least $4$ different colors and it was never in the kernel. However, this would mean that $d^+(v) \geqslant 4$ as $v$ sent an edge to each kernel. This is impossible since $G$ is $3$-bounded.
 \end{proof}
+
+\section{Local graph algorithms for list coloring}
 
 \newpage
 \printbibliography
