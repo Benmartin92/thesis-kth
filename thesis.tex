@@ -236,13 +236,13 @@ Another interesting question is how to compute the Szekeres\---Wilf number of a 
  \KwData{An arbitrary graph $G = (V,E)$}
  \KwResult{The Szekeres\---Wilf number of $G$ in $szw$}
  $H^{(1)} := G$\;
- $szw := -1$\;
+ $szw := 0$\;
  \For{$i\leftarrow 1$ \KwTo $|V(G)|$}{
   Select $v_i \in V(H^{i})$ such that $\deg(v) = \delta(G)$\;
-  $szw := \max(\deg(v), szw)$\;
+  $szw := \max(\deg(v_i), szw)$\;
   $V(H^{i+1}) := V(H^{i}) \setminus \lbrace v \rbrace$\;
  }
- \caption{Computing the Szekeres\---Wilf number in an arbitrary graph}
+ \caption{Computing the Szekeres\---Wilf number of an arbitrary graph}
 \end{algorithm}
 \begin{proof}
 The linear time is obvious as we iterate through the nodes of $G$. The efficient selection of the minimum-degree node is described in the proof of Proposition \ref{state:acyclic-complexity-proof}. Let $k$ be the Szekeres\---Wilf number of $G$. It is obvious that $szw \leqslant k = \max_{H \subset G} \delta(H)$. To obtain a contradiction assume that $szw < k$. Now let $H$ be the "maximal" subgraph in $G$, that is, $szw < \delta(H) = k$. Let $i$ be the smallest index such that $v_i \in V(H)$. Due to our choice we have $H \subset H_i$. Then $\deg_{H_i}(v_i) = \delta(H_i) \leqslant szw < k = \delta(H) \leqslant \deg_H(v_i)$. However, from $H \subset H_i$, it follows that $\deg_H(v_i) \leqslant \deg_{H_i}(v_i)$ which is a contradiction and therefore $k = szw$ as required.
