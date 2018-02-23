@@ -130,7 +130,9 @@ R. Wang, et al. \cite{7248845} introduced a \textit{distinctly different} channe
 
 In this thesis, ...
 \newpage
-\section{List coloring of $1$-band buffering cellular graphs} 
+\section{List coloring of $1$-band buffering cellular graphs}
+[TODO: outline every subsection] In what follows, we construct a special orientation of a cellular graph $G$. This orientation is acyclic, that is, it does not contain directed cycles and satisfies the following degree constraint $\deg^+(v) \leqslant 3$ for all $v \in V(G)$. In addition, we will give a polynomial time algorithm that constructs such orientations in polynomial time. We end this subsection with the generalization of the same results for arbitrary graphs by introducing the Szekeres\---Wilf number of a graph.
+
 \subsection{The mathematical model}
 In this section, we introduce the basic notions and definitions that are essential to formulate the problem in a graph-theoretic setting.
 \begin{defin} A graph $G$ is a  \textit{cellular graph} (see Fig. \ref{fig:cellular-graph}) if it is constructed from the hexagonal cell topology in the following way: each cell is a node and two nodes are connected if and only if they share a common boundary.
@@ -153,7 +155,6 @@ From now on we assume that all graphs are connected. We can do it without the lo
 
 \subsection{Degree bounded acyclic orientations of cellular graphs}\label{sec:orientation}
 
-In what follows, we construct a special orientation of a cellular graph $G$. This orientation is acyclic, that is, it does not contain directed cycles and satisfies the following degree constraint $\deg^+(v) \leqslant 3$ for all $v \in V(G)$. In addition, we will give a polynomial time algorithm that constructs such orientations in polynomial time. We end this subsection with the generalization of the same results for arbitrary graphs by introducing the Szekeres\---Wilf number of a graph.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -219,8 +220,6 @@ It is easy to see that the proof of this lemma can be transformed into a polynom
 It is enough to prove that "Select $v \in V(G^i)$ such that $\deg(v) \leqslant 3$" can be done in $O(|V(G)|)$ since the rest is obvious. Let us initialize a queue $Q := \lbrace v \mid \deg(v) \leqslant  3\rbrace$ before we start running the algorithm. We pop a node $v$ from $G$ at every iteration and push new ones after the removal of $v$ if there are new nodes in $G$ that satisfy the degree condition. The pop and push methods can be implemented in constant time which completes the proof.
 \end{proof}
 
-It is important to note that the idea of Algorithm \ref{alg:find-acyclic-bounded-orientation} came from \cite{CHROBAK1991243} where the authors proved that every planar graph has a $5$-bounded acyclic orientation. They used the fact that every planar graph has a node with at most $5$ neighbors which follows from Euler's formula.
-
 \begin{note} We would like to note that a more general proposition can be formulated from Lemma \ref{lem:bounded-acyclic-orientation} without assuming that $G$ is cellular. If we can ensure that in each step a node $v$ with $\deg(v) \leqslant k$ can be selected then the algorithm will yield a $k$-bounded acyclic orientation in arbitrary graphs.
 \end{note}
 
@@ -250,18 +249,20 @@ Another interesting question is how to compute the Szekeres\---Wilf number of a 
 The linear time is obvious as we iterate through the nodes of $G$. The efficient selection of the minimum-degree node is described in the proof of Proposition \ref{state:acyclic-complexity-proof}. Let $k$ be the Szekeres\---Wilf number of $G$. It is obvious that $szw \leqslant k = \max_{H \subset G} \delta(H)$. To obtain a contradiction assume that $szw < k$. Now let $H$ be the "maximal" subgraph in $G$, that is, $szw < \delta(H) = k$. Let $i$ be the smallest index such that $v_i \in V(H)$. Due to our choice we have $H \subset H_i$. Then $\deg_{H_i}(v_i) = \delta(H_i) \leqslant szw < k = \delta(H) \leqslant \deg_H(v_i)$. However, from $H \subset H_i$, it follows that $\deg_H(v_i) \leqslant \deg_{H_i}(v_i)$ which is a contradiction and therefore $k = szw$ as required.
 \end{proof}
 
-\subsection{Defective list coloring}
-
+\subsection{Defective coloring}
+In some cases, it is impossible to assign the channels such that the allocation yields an interference-free system. 
 \begin{defin} We say that a graph $G$ is $(k,d)$-colorable if the graph can be colored with $k$ colors such that every color class induces a graph with maximum degree at most $d$.
 \end{defin}
 
-Such colorings are known as \textit{defective} or \textit{improper} coloring since the definition allows the nodes to have at most $d$ neighbors from the same color class. TODO: application
-A classical result from ... cite soda-proc.pdf
-\begin{theo}[Lovász]
+Such colorings are known as \textit{defective} or \textit{improper} coloring since the definition allows the nodes to have at most $d$ neighbors from the same color class.
+A classical result from 
+\begin{theo}[Lovász]\label{theo:lovasz-defective}
 Let $G$ be any graph and $k > 0$ then $G=(V,E)$ is $(k,[\Delta(G)/k])$-colorable in $O(|E|)$ steps.
 \end{theo}
 \begin{proof} Let us consider an arbitrary (not necessarily proper) $k$-coloring of $G$. If this coloring is a $(k,[\Delta(G)/k])$-coloring then we are done otherwise choose a node $v$ that has more than $[\Delta(G)/k]$ neighbors from the same color class. It is obvious that there exists a color class $c$ with at most $[\Delta(G)/k]$ nodes in the neighbor set of $v$. By changing the color class of $v$ to color class $c$, we decrease the monochromatic edges in the coloring by at least one. Therefore we reach a $(k,[\Delta(G)/k])$-coloring in at most $|E|$ steps.
 \end{proof}
+
+\paragraph*{References} The idea of Algorithm \ref{alg:find-acyclic-bounded-orientation} came from \cite{CHROBAK1991243} \textit{Theorem 2.1} where the authors proved that every planar graph has a $5$-bounded acyclic orientation. They used the fact that every planar graph has a node with at most $5$ neighbors which follows from Euler's formula. Theorem \ref{theo:lovasz-defective} is from \cite{Cowen:1997:CD:314161.314387} \textit{Theorem 1.1} and the proof of Algorithm \ref{alg:szekeres-wilf-computation} can be found in \cite{Matula:1983:SOC:2402.322385} \textit{2. Smallest-Last Vertex Ordering}.
 
 \section{$1$-band buffering cellular graphs are $4$-choosable}\label{sec:4-choosable}
 
