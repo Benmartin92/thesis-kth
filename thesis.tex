@@ -72,6 +72,7 @@
 \newcommand{\removelatexerror}{\let\@latex@error\@gobble}
 \makeatother
 
+
 % Irodalomjegyzék
 \usepackage[backend=bibtex,
 backref=true,
@@ -141,7 +142,7 @@ In this section, we introduce the basic notions and definitions that are essenti
 \end{defin}
 \begin{figure}[!h]
 \centering
-%\includegraphics[scale=0.4]{cellular_graph.png}
+\includegraphics[scale=0.15]{figures/cellular-graph.png}
 \caption{An example of a cellular graph}\label{fig:cellular-graph}
 \end{figure}
 \begin{defin} A cellular network is $k$\textit{-band buffering} if the interference extends up to $k$ cells.
@@ -151,7 +152,7 @@ In this section, we introduce the basic notions and definitions that are essenti
 \begin{defin} The \textit{choice number} of $G$ is the smallest $k \in \mathbb{N}$ (notated by $\ch(G)$) such that $G$ is $k$-choosable.
 \end{defin}
 It is worth pointing out that proving a graph to be $k$-choosable is more difficult than showing that it is $k$-colorable. This simply follows from the fact that the lists $L(v):=\lbrace 1,2,3,\ldots,k\rbrace$ for all $v \in V(G)$ bring us back to the original $k$-coloring problem. This observation yields our first bound, that is, $\chi(G) \leqslant \ch(G)$ for any graph $G$. Therefore, it is not surprising that there exists a non $2$-choosable but $2$-colorable graph.
-\begin{example}[A non $2$-choosable graph $G$ with $\chi(G)=2$]
+\begin{example}[A non $2$-choosable graph $G$ with $\chi(G)=2$]\label{ex:2-colorable-ch3}
 To construct such an example, let us consider the graph in Figure \ref{fig:2-colorable-ch3}. Its coloring immediately shows that $\chi(G)=2$. For the choice number imagine that the numbers inside the nodes correspond to the list of available colors at each node.
 \begin{figure}[!h]
 \centering
@@ -165,6 +166,7 @@ TODO: relations between list chromatic and the usual chromatic number, bounds fo
 
 \begin{note}From now on we assume that all graphs are connected. We can do it without the loss of generality as all the algorithms and proofs can be repeated for each connected component of a graph.\end{note}
 
+\paragraph*{References} Example \ref{ex:2-colorable-ch3} is from \cite{erdos-choosability}.
 \subsection{Degree bounded acyclic orientations of cellular graphs}\label{sec:orientation}
 
 
@@ -178,7 +180,7 @@ Let $G$ be a cellular graph. Then $G$ has a node $v$ such that $\deg(v) \leqslan
 Let $v$ be any node of $G$ and we assign $(0,0)$ to this node. We assign coordinates to every node starting from node $v$ in the following way. If a node $w$ is to the north of node $v$ then the coordinates of node $w$ is equal to the coordinates of node $v$ plus $(0,1)$. We summarize this method in Fig. \ref{fig:assignment} according to the cardinal directions.
 \begin{figure}[!h]
 \centering
-%\includegraphics[scale=0.4]{hexagonal_coordinate_system.png}
+\includegraphics[scale=0.15]{figures/hexagonal-coordinate-system.png}
 \caption{Hexagonal coordinate system}\label{fig:assignment}
 \end{figure}
 By applying this method to every node, we get a coordinate system within our hexagonal topology. Since there are finitely many node in $V(G)$, we can select the maximal node by selecting the node with maximal $x$- and $y$-coordinate, that is, a node $w$ with the following property: if $(x_1,y_1)$ is the coordinates of $w$ and $v \neq w$ is another node with the coordinates $(x_2,y_2)$ then $x_1 \geqslant x_2$ and $y_1 > y_2$ are satisfied.
