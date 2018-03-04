@@ -156,9 +156,25 @@ To construct such an example, let us consider the graph in Figure \ref{fig:2-col
 \end{figure}
 Selecting either color $1$ or color $3$ in the upper-left corner leads to a conflict in the coloring and thus $G$ is not $2$-choosable.
 \end{example}
+% Source of the proof: http://www.math.uri.edu/~eaton/TalkUriOct03P2.pdf
+\begin{theo}
+Let $G$ be any graph with $n$ nodes. Then $\ch(G) \leqslant \chi(G) \ln{n}$.
+\end{theo}
+\begin{proof} To prove the inequality, we use a probabilistic argument. Assume that $G$ is colored with $s := \chi(G)$ colors, that is, the nodes $V(G)$ are divided into the color classes $C_1, C_2, \ldots, C_s$. Suppose that $G$ has a $k$-list assignment $L$ where $k = \chi(G) \ln{n}$ and $n := |V(G)|.$ Consider the probability space of the $s$-partitions $\pi \colon \pi_{1},\pi_{2},\ldots,\pi_{s}$ of $\bigcup_{v \in V(G)} L(v).$ If we can assign for all $i \in \lbrace 1,2,3,\dots,s \rbrace$ a partition $\pi_i$ to the color class $C_i$ such that for all $v \in C_i$ we have $L(v) \cap P_i \neq \varnothing$, then $G$ can be colored from the lists $L$. 
 
-TODO: relations between list chromatic and the usual chromatic number, bounds for the list chromatic number
-
+It remains to prove that such a partition $\pi$ exists with nonzero probability and thus the assertion follows. Let us first calculate the probability of the complementary event:
+\begin{equation*}
+\begin{split}
+\mathbb{P}(\exists i \in \lbrace 1,2,\ldots, s \rbrace, \exists v \in C_i, L(v) \cap P_i = \varnothing) = \\
+\sum_{v \in V(G)}\left( 1 - \frac{1}{s} \right)^k = n \left(\left(1 - \frac{1}{s} \right)^s \right)^{\frac{k}{s}} < n\mathrm{e}^{-\frac{k}{s}}.
+\end{split}
+\end{equation*}
+The term $\left( 1 - \frac{1}{s} \right)$ is the probability of $c \in L(v)$ not being in $P_i.$ Since there are $k$ colors in each list and we consider every node, the summation is valid. From the equation $k = s \ln{n}$, it follows that $n = \mathrm{e}^{k/s}$ and therefore $n\mathrm{e}^{-k/s} = 1.$ Since the complementary event is not a sure event, it follows that
+$$
+\mathbb{P}(\forall i \in \lbrace 1,2,\ldots, s \rbrace, \forall v \in C_i, L(v) \cap P_i \neq \varnothing) > 0
+$$
+which completes the proof.
+\end{proof}
 \begin{note}From now on we assume that all graphs are connected. We can do it without the loss of generality as all the algorithms and proofs can be repeated for each connected component of a graph.\end{note}
 
 \paragraph*{References} Example \ref{ex:2-colorable-ch3} is from \cite{erdos-choosability}.
