@@ -1,0 +1,7 @@
+/local-list-coloring/bin/
+/local-list-coloring/jgrapht-1.0.1/javadoc/
+*.log
+*.pdf
+*.out
+*.blg
+*.bbl
