@@ -313,7 +313,7 @@ It has been shown that finding a kernel in an arbitrary graph is $\mathrm{NP}$-c
 
 \begin{lem}\label{lem:kernel-lemma} Let $G$ be a directed acyclic graph. Then a kernel $K \subseteq V(G)$ can be found in polynomial time.
 \end{lem}
-\begin{proof} Since $G$ is acyclic we can consider the topological order of its nodes (which can be computed in polynomial time). Let $\lbrace v_1, v_2, \ldots, v_n \rbrace$ be this topological order. Let us start from node $v_1$ and add it to the kernel, that is, $K = \lbrace v_1 \rbrace$. Mark the neighbors of $v_1$. After that, we move on with the second node $v_2$, if it is marked we skip it otherwise we add it to the kernel $(K := K \cup \lbrace v_2 \rbrace)$ and mark its neighbors. Repeat this procedure with the remaining nodes. We need to prove that
+\begin{proof} Since $G$ is acyclic we can consider the topological order of its nodes (which can be computed in polynomial time). Let $\lbrace v_1, v_2, \ldots, v_n \rbrace$ be this topological order. Let us start from node $v_n$ and add it to the kernel, that is, $K = \lbrace v_n \rbrace$. Mark the neighbors of $v_n$. After that, we move on with the next node $v_{n-1}$, if it is marked we skip it otherwise we add it to the kernel $(K := K \cup \lbrace v_{n-1} \rbrace)$ and mark its neighbors. Repeat this procedure with the remaining nodes. We need to prove that
 \begin{enumerate}
 \item $K$ is independent and
 \item for each node $u \in V(G) \setminus K$ there is a node $v \in K$ such that $(u,v) \in E(G)$.
@@ -326,7 +326,7 @@ It has been shown that finding a kernel in an arbitrary graph is $\mathrm{NP}$-c
  \KwResult{A kernel $K \subseteq V(G)$}
  $T := \text{the topological order of $V(G)$}$\;
  $K := \emptyset$\;
- \For{$i\leftarrow 1$ \KwTo $|V(G)|$}{
+ \For{$i\leftarrow |V(G)|$ \KwTo $1$}{
   \If{$T(i)$ is unmarked} {
   	$K := K \cup \lbrace T(i) \rbrace$\;
   	Mark the neighbors of $T(i)$\;
