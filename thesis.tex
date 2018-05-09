@@ -335,7 +335,9 @@ It has been shown that finding a kernel in an arbitrary graph is $\mathrm{NP}$-c
  \caption{Finding a kernel in a DAG}
 \end{algorithm}
 
-We note that the topological order can be computed in linear time in the number of nodes and edges with Kahn's algorithm \cite{Kahn:1962:TSL:368996.369025}, therefore the running time of our algorithm is $O(|V(G)|+|E(G)|)$. We also note that an induced subgraph of a DAG is trivially a DAG, therefore from Algorithm \ref{alg:find-kernel-in-dags} it follows that DAGs are kernel-perfect, that is, there is no need to apply Richardson's theorem in the proof of Theorem \ref{thm:choice-number}.
+We note that the topological order can be computed in linear time in the number of nodes and edges with Kahn's algorithm \cite{Kahn:1962:TSL:368996.369025}, therefore the running time of our algorithm is $O(|V(G)|+|E(G)|)$. We also note that an induced subgraph of a DAG is trivially a DAG, therefore from Algorithm \ref{alg:find-kernel-in-dags} it follows that DAGs are kernel-perfect, that is, there is no need to apply Richardson's theorem in the proof of Theorem \ref{thm:choice-number}. 
+
+Finally, it is worth mentioning that Von Neumann and Morgenstern \cite{neumann} proved that the kernel of a DAG is unique, that is, the output of Algorithm \ref{alg:find-kernel-in-dags} is independent of the selected topological order.
 \subsection{$4$-list coloring of cellular graphs}\label{sec:4-list-coloring}
 Now we have everything necessary to prove our main result and give a polynomial algorithm that computes a $4$-list coloring of a cellular graph. 
 
@@ -369,6 +371,8 @@ In each iteration, we color the nodes in $U$ and remove one color. The color is 
 \end{lem}
 \begin{proof} To obtain a contradiction, let us suppose that there is a node $v$ that is not colored and it does not have an available color ($|L(v)|=0$). This means that $v$ was in $V_{\alpha}$ for at least $4$ different colors and it was never in the kernel. However, this would mean that $d^+(v) \geqslant 4$ as $v$ sent an edge to each kernel. This is impossible since $G$ is $3$-bounded.
 \end{proof}
+
+\paragraph*{References} Galvin's theorem with proof can be found in \cite{citeulike:395714} \textit{Lemma 5.4.3}.
 
 \section{Local graph algorithms for list coloring}
 
