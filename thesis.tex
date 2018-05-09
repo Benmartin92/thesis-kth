@@ -278,7 +278,7 @@ In some cases, it is impossible to assign the channels such that the allocation 
 \end{defin}
 
 Such colorings are known as \textit{defective} or \textit{improper} coloring since the definition allows the nodes to have at most $d$ neighbors from the same color class.
-A classical result from !!!TODO!!!!
+A classical result from Lovász shows that an arbitrary graph can be colored with $k$ colors in polynomial time with at most $[\Delta(G)/k]$ ''errors''.
 \begin{theo}[Lovász]\label{theo:lovasz-defective}
 Let $G$ be any graph and $k > 0$ then $G=(V,E)$ is $(k,[\Delta(G)/k])$-colorable in $O(|E|)$ steps.
 \end{theo}
@@ -296,7 +296,7 @@ Before proving our theorem we need to introduce the notion of kernel in graphs a
 \end{defin}
 \begin{theo}[Galvin, 1995]\label{thm:galvin} Let $G$ be a graph and $\lbrace L(v) \mid v \in V(G) \rbrace$ given color sets. If $G$ has an orientation $D$ such that $d^+(v) < |L(v)|$ for all $v \in V(D)$ and every induced subgraph of $D$ has a kernel, then $G$ can be colored from the given color sets. $\blacksquare$
 \end{theo}
-We will reformulate this theorem later for cellular graphs. 
+We postpone giving a proof of this theorem as we will reformulate Galvin's theorem for cellular graphs later.
 \begin{defin} We note that a directed graph is called kernel-perfect if all of its induced subgraphs contain a kernel.
 \end{defin}
 \begin{theo}\label{thm:choice-number}
