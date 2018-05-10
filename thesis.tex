@@ -251,7 +251,7 @@ It is enough to prove that "Select $v \in V(G^i)$ such that $\deg(v) \leqslant 3
 
 Immediately follows that if we omit the cellular graph assumption\---having known that the Szekeres\---Wilf number of graph is $k$\---then the arguments of the proof of Lemma \ref{lem:bounded-acyclic-orientation} can be repeated and thus the following lemma holds.
 
-\begin{lem} Let $G$ be any graph such that its Szekeres\---Wilf number is $k$. Then $G$ has a $k$-bounded acyclic orientation. \qed
+\begin{lem}\label{lem:szekeres} Let $G$ be any graph such that its Szekeres\---Wilf number is $k$. Then $G$ has a $k$-bounded acyclic orientation. \qed
 \end{lem}
 
 Another interesting question is how to compute the Szekeres\---Wilf number of a graph. The following algorithm \cite{Matula:1983:SOC:2402.322385} computes this number in linear time by repeatedly removing the minimum-degree nodes.
@@ -375,7 +375,53 @@ In each iteration, we color the nodes in $U$ and remove one color. The color is 
 
 \paragraph*{References} Galvin's theorem with proof can be found in \cite{citeulike:395714} \textit{Lemma 5.4.3}.
 
+\section{The $k$-band buffering case}
+In this section, we generalize the current results for $k > 1$. From Galvin's theorem and Lemma \ref{lem:szekeres}, it can be seen that a graph is $(k+1)$-choosable if $G$ has a Szekeres\---Wilf number of $k$, in other words if $G$ has a $k$-bounded acyclic orientation then it is $(k+1)$-choosable.
+
+By exploiting the special structure of $1$-band buffering cellular graphs, we found that such graphs always have a node with $\deg(v) \leqslant 3$ (Lemma \ref{lem:degree-constraint}). Lemma \ref{lem:bounded-acyclic-orientation} used this property to prove that they admit a $3$-bounded acyclic orientation.
+
+Even though Algorithm \ref{alg:four-list-coloring} is designed for $1$-band buffering cellular graphs, the input graph $G$ can be easily modified such that running Algorithm \ref{alg:four-list-coloring} properly $l$-list-colors $G$ while it does not violate the $k$-band buffering requirement. The usual trick to do this is to construct a graph $G'$ from $G$ such that $V(G') := V(G)$ and
+$$(u,v) \in E(G') \text{ if and only if } d_{G}(u,v) \leqslant k$$
+where $d_{G}(u,v)$ is the distance between $u$ and $v$ in $G$, that is, the length of the shortest path that connects $u$ and $v$. It is trivial that running Algorithm \ref{alg:four-list-coloring} for $G'$ is equivalent to running a $k$-band buffering list-coloring algorithm  for $G$.
+
+Obviously, we also need to modify Algorithm \ref{alg:find-acyclic-bounded-orientation} as we do not know the Szekeres\---Wilf number of $G'$. Algorithm \ref{alg:find-acyclic-bounded-orientation-general} simply modifies Algorithm \ref{alg:find-acyclic-bounded-orientation} by selecting a node with $\deg(v) = \delta(G^i)$ in each iteration $i$ which is the same step that Algorithm \ref{alg:szekeres-wilf-computation} carries out to compute the Szekeres\---Wilf number. Therefore the following theorem holds:
+
+\begin{theo} Algorithm \ref{alg:find-acyclic-bounded-orientation-general} computes an $l$-bounded acyclic orientation of an arbitrary graph $G$ where $l$ is the Szekeres\---Wilf number of $G$.
+\end{theo}
+
+\begin{proof} Immediately follows from Algorithm \ref{alg:find-acyclic-bounded-orientation} and \ref{alg:szekeres-wilf-computation}.
+\end{proof}
+
+\begin{algorithm}\label{alg:find-acyclic-bounded-orientation-general}
+ \KwData{A cellular graph $G = (V,E)$}
+ \KwResult{An acyclic $l$-bounded orientation of $G$}
+ $G^{(0)} := G$\;
+ Initialize $f \colon V(G) \to \mathbb{N}$\;
+ \For{$i\leftarrow 0$ \KwTo $|V(G)|-1$}{
+  Select $v \in V(G^i)$ such that $\deg(v) = \delta(G^i)$\;
+  $f(v):=i$\;
+  $V(G^{(i+1)}):=V(G^{i}) \setminus \lbrace v \rbrace$\;
+ }
+ Initialize $H:=(V,A)$\;
+ \ForAll{$e = (u,v) \in E(G)$}{
+   \eIf{$f(u) < f(v)$} {
+   	$A := A \cup (u,v)$\;
+   }{
+   $A := A \cup (v,u)$\;
+   }   
+ }
+ \caption{Constructing an $l$-bounded acyclic orientation of a $k$-bounded cellular graph where $l$ is the Szekeres\---Wilf number of $G$}
+\end{algorithm}
+
+The following question immediately arises: how large is the Szekeres\---Wilf number of $k$-band buffering cellular graphs? Unfortunately, we cannot answer this question, however the following theorem gives us an upper bound and as a corollary it turns out that $k$-band buffering cellular graphs are $(3(k+1)k/2+1)$-choosable.
+
+\begin{theo} Let $G$ be a $k$-band buffering cellular graph then $G$ has a node with $\deg(v) \leqslant 3(k+1)k/2$.
+\end{theo}
+\begin{proof}
+\end{proof}
 \section{Local graph algorithms for list coloring}
+
+\subsection{The local model}
 
 \newpage
 \printbibliography
