@@ -375,13 +375,25 @@ In each iteration, we color the nodes in $U$ and remove one color. The color is 
 
 \paragraph*{References} Galvin's theorem with proof can be found in \cite{citeulike:395714} \textit{Lemma 5.4.3}.
 
-\section{The $k$-band buffering case}
-In this section, we generalize the current results for $k > 1$. From Galvin's theorem and Lemma \ref{lem:szekeres}, it can be seen that a graph is $(k+1)$-choosable if $G$ has a Szekeres\---Wilf number of $k$, in other words if $G$ has a $k$-bounded acyclic orientation then it is $(k+1)$-choosable.
+\section{The $k$-band buffering case and its application in IEEE 802.11 systems}
+In this section, we generalize the current results for $k > 1$. In addition, we introduce a possible application of the presented algorithms.
+
+\subsection{$k$-band buffering cellular graphs are $(3(k+1)k/2+1)$-choosable}
+From Galvin's theorem and Lemma \ref{lem:szekeres}, it immediately follows the following theorem.
+\begin{theo} Let $G$ be any graph. If $G$ has a Szekeres\---Wilf number of $k$ then $G$ is $(k+1)$-choosable. In other words, if $G$ has a $k$-bounded acyclic orientation then it is $(k+1)$-choosable.
+\end{theo}
 
 By exploiting the special structure of $1$-band buffering cellular graphs, we found that such graphs always have a node with $\deg(v) \leqslant 3$ (Lemma \ref{lem:degree-constraint}). Lemma \ref{lem:bounded-acyclic-orientation} used this property to prove that they admit a $3$-bounded acyclic orientation.
 
-Even though Algorithm \ref{alg:four-list-coloring} is designed for $1$-band buffering cellular graphs, the input graph $G$ can be easily modified such that running Algorithm \ref{alg:four-list-coloring} properly $l$-list-colors $G$ while it does not violate the $k$-band buffering requirement. The usual trick to do this is to construct a graph $G'$ from $G$ such that $V(G') := V(G)$ and
-$$(u,v) \in E(G') \text{ if and only if } d_{G}(u,v) \leqslant k$$
+Even though Algorithm \ref{alg:four-list-coloring} is designed for $1$-band buffering cellular graphs, the input graph $G$ can be easily modified such that running Algorithm \ref{alg:four-list-coloring} properly $l$-list-colors $G$ while it does not violate the $k$-band buffering requirement. The usual trick to do this is to construct a new graph $G'$ (as depicted in Figure \ref{fig:cellular-graph-extension}) from $G$ such that $V(G') := V(G)$ and
+\begin{equation}\label{eq:graph-mod}
+(u,v) \in E(G') \text{ if and only if } d_{G}(u,v) \leqslant k
+\end{equation}
+\begin{figure}[!h]
+\centering
+\includegraphics[scale=0.09]{figures/cellular_graph_extension.png}
+\caption{The red node of the cellular graph is connected (with dotted lines) to its $2$-distance neighbors}\label{fig:cellular-graph-extension}
+\end{figure}
 where $d_{G}(u,v)$ is the distance between $u$ and $v$ in $G$, that is, the length of the shortest path that connects $u$ and $v$. It is trivial that running Algorithm \ref{alg:four-list-coloring} for $G'$ is equivalent to running a $k$-band buffering list-coloring algorithm  for $G$.
 
 Obviously, we also need to modify Algorithm \ref{alg:find-acyclic-bounded-orientation} as we do not know the Szekeres\---Wilf number of $G'$. Algorithm \ref{alg:find-acyclic-bounded-orientation-general} simply modifies Algorithm \ref{alg:find-acyclic-bounded-orientation} by selecting a node with $\deg(v) = \delta(G^i)$ in each iteration $i$ which is the same step that Algorithm \ref{alg:szekeres-wilf-computation} carries out to compute the Szekeres\---Wilf number. Therefore the following theorem holds:
@@ -392,7 +404,7 @@ Obviously, we also need to modify Algorithm \ref{alg:find-acyclic-bounded-orient
 \begin{proof} Immediately follows from Algorithm \ref{alg:find-acyclic-bounded-orientation} and \ref{alg:szekeres-wilf-computation}.
 \end{proof}
 
-\begin{algorithm}\label{alg:find-acyclic-bounded-orientation-general}
+\begin{algorithm}[h!]\label{alg:find-acyclic-bounded-orientation-general}
  \KwData{A cellular graph $G = (V,E)$}
  \KwResult{An acyclic $l$-bounded orientation of $G$}
  $G^{(0)} := G$\;
@@ -415,13 +427,29 @@ Obviously, we also need to modify Algorithm \ref{alg:find-acyclic-bounded-orient
 
 The following question immediately arises: how large is the Szekeres\---Wilf number of $k$-band buffering cellular graphs? Unfortunately, we cannot answer this question, however the following theorem gives us an upper bound and as a corollary it turns out that $k$-band buffering cellular graphs are $(3(k+1)k/2+1)$-choosable.
 
-\begin{theo} Let $G$ be a $k$-band buffering cellular graph then $G$ has a node with $\deg(v) \leqslant 3(k+1)k/2$.
+\begin{theo} Let $G$ be a $k$-band buffering cellular graph. Consider the graph $G'$ which is the modification of $G$ according to equation \ref{eq:graph-mod} then $G'$ has a node $v$ with $\deg(v) \leqslant 3(k+1)k/2$.
 \end{theo}
-\begin{proof}
+\begin{proof} Let $G$ be a $k$-band buffering cellular graph and $v$ any node of $G$. It is easy to see that the maximum number of $m$-distance neighbors of $v$ is $6m$. Therefore the maximum number of at most $k$-distance neighbors of $v$ is 
+$$6+12+\ldots+6k=\frac{(6 + 6k)k}{2} = 3k(k+1).$$
+Let us select the same extremal point that we have selected in Lemma \ref{lem:degree-constraint}, that is, a node $v$ with maximal $x$- and $y$-coordinate. Figure \ref{fig:extremal-proof} and our hexagonal coordinate system (see Figure \ref{fig:assignment}) show that by moving either north, northeast or southeast, we increase either coordinate $x$ or $y$ that would violate the maximality of $v$. Since this region includes exactly the half of the possible at most $k$-distance neighbors of $v$, we can deduce that 
+$$\deg(v) \leqslant \frac{3(k+1)k}{2} \text{ in $G'$}$$ 
+as required.
+\begin{figure}[!h]
+\centering
+\includegraphics[scale=0.09]{figures/proof-k-band-buffering.png}
+\caption{This figure visualizes that above the white diagonal we either increase coordinate $x$ or $y$ of the red hexagon.}\label{fig:extremal-proof}
+\end{figure}
 \end{proof}
-\section{Local graph algorithms for list coloring}
-
-\subsection{The local model}
+\begin{corollary} Let $G$ be a $k$-band buffering cellular graph then $G$ is $(3(k+1)k/2+1)$-choosable.
+\end{corollary}
+It is worth mentioning that for $k=2$ we proved that a $2$-band buffering cellular graph is $10$-choosable which coincides with the result of \cite{7248845}.
+\subsection{Channel allocation in IEEE 802.11 systems}
+\begin{figure}[!h]
+\centering
+\includegraphics[scale=0.3]{figures/wifi-freq.png}
+\caption{This figure visualizes that above the white diagonal we either increase coordinate $x$ or $y$ of the red hexagon.}\label{fig:extremal-proof}
+\end{figure}
+\section{Evaluations}
 
 \newpage
 \printbibliography
