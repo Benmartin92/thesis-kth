@@ -117,6 +117,10 @@ I would also like to thank my parents for their continuous support throughout my
 \tableofcontents
 \newpage
 \pagenumbering{arabic}
+\abstract{The optimal channel allocation problem in cellular networks is often formulated in a graph theoretic framework. One of its variants\---where each access point knows the list of its free channels\---is related the so-called list coloring problem. In spite of the fact that the list coloring problem is NP-complete for arbitrary graphs, we show that there exists a polynomial time algorithm for $k$-band buffering callular graphs; and as a corollary it turns out the choice number of such a graphs is at most $3k(k+1)/2+1$.
+
+In addition, we implement our algorithm as a Java application and carry out some measurements regarding 
+}
 \section{Introduction}
 In telecommunication one of the most challenging problems is the efficient allocation of available frequency. When the available bandwidth is limited, the efficient utilization of the frequency spectrum is a major concern. Due to the growing number of mobile Internet users, optimal channel allocation in cellular networks and their variants have been heavily researched in recent years \cite{Audhya:2011:SCA:1988563.1988571}.
 
@@ -392,7 +396,7 @@ Even though Algorithm \ref{alg:four-list-coloring} is designed for $1$-band buff
 \begin{figure}[!h]
 \centering
 \includegraphics[scale=0.09]{figures/cellular_graph_extension.png}
-\caption{The red node of the cellular graph is connected (with dotted lines) to its $2$-distance neighbors}\label{fig:cellular-graph-extension}
+\caption{The red node of the cellular graph is connected (with dashed edges) to its $2$-distance neighbors}\label{fig:cellular-graph-extension}
 \end{figure}
 where $d_{G}(u,v)$ is the distance between $u$ and $v$ in $G$, that is, the length of the shortest path that connects $u$ and $v$. It is trivial that running Algorithm \ref{alg:four-list-coloring} for $G'$ is equivalent to running a $k$-band buffering list-coloring algorithm  for $G$.
 
@@ -444,13 +448,34 @@ as required.
 \end{corollary}
 It is worth mentioning that for $k=2$ we proved that a $2$-band buffering cellular graph is $10$-choosable which coincides with the result of \cite{7248845}.
 \subsection{Channel allocation in IEEE 802.11 systems}
+In IEEE 802.11 $2.4$ GHz band systems channel center frequencies are defined as follows \cite{ieee80211} (cf. Figure \ref{fig:channel-allocation}):
+$$\text{Channel center frequency } = 2403 + 5\cdot n_{ch} \text{ MHz} \quad (n_{ch} = 1,2,\ldots, 13).$$
+The number of non-overlapping channels with $22$ MHz channel width is $3$ (namely Channel $1, 6$ and $11$) meaning that an interference-free allocation is possible if and only if the interference graph $G$ has a chromatic number of $3$. In practice, this rarely happens due to the growing number of IEEE 802.11 access points which results in a very crowded deployment.
 \begin{figure}[!h]
 \centering
 \includegraphics[scale=0.3]{figures/wifi-freq.png}
-\caption{This figure visualizes that above the white diagonal we either increase coordinate $x$ or $y$ of the red hexagon.}\label{fig:extremal-proof}
+\caption{Channel allocation in the $2.4$ GHz Band (source: \url{https://en.wikipedia.org/wiki/List_of_WLAN_channels})}\label{fig:channel-allocation}
 \end{figure}
 \section{Evaluations}
-
+\begin{table}[h!]
+\centering
+\begin{tabular}{|c|c|c|}
+\hline
+ $k$& Theoretical upper bound $(3k(k+1)/2)$ & Szekeres\---Wilf number \\ \hline
+ 1&  3&   \\ \hline
+ 2&  9&  \\ \hline
+ 3&  18&  \\ \hline
+ 4&  30&  \\ \hline
+ 5&  45&  \\ \hline
+ 6&  63&  \\ \hline
+ 7&  84&  \\ \hline
+ 8&  108&  \\ \hline
+ 9&  135&  \\ \hline
+ 10&  165&  \\ \hline
+\end{tabular}
+\label{table:eval}
+\caption{The output of Algorithm \ref{alg:szekeres-wilf-computation} implemented as a Java application using a randomly generated $k$-band buffering cellular graph of $1000$ nodes}
+\end{table}
 \newpage
 \printbibliography
 \addcontentsline{toc}{section}{References}
