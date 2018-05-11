@@ -459,7 +459,26 @@ as required.
 \end{proof}
 \begin{corollary} Let $G^k$ be a $k$-band buffering cellular graph then $G^k$ is $(3(k+1)k/2+1)$-choosable.
 \end{corollary}
-It is worth mentioning that for $k=2$ we proved that a $2$-band buffering cellular graph is $10$-choosable which coincides with the result of \cite{7248845}.
+It is worth mentioning that for $k=2$ we proved that a $2$-band buffering cellular graph is $10$-choosable which coincides with the result of \cite{7248845}. 
+
+Now, we have everything to modify Algorithm \ref{alg:four-list-coloring} such that it handles $k$-band buffering graphs. Algorithm \ref{alg:szekeres-list-coloring} accepts lists of size $3k(k+1)/2+1$, however it is possible run Algorithm \ref{alg:szekeres-wilf-computation} to precompute the Szekeres\---Wilf number of the current $k$-band buffering graph thereby decreasing the initial list sizes.
+
+\begin{algorithm}\label{alg:szekeres-list-coloring}
+ \KwData{A $k$-band buffering cellular graph $G$ and a set of colors $L(v)$ for all $v \in V(G)$ with $|L(v)| \geqslant 3k(k+1)/2+1$}
+ \KwResult{$l$-list coloring of $G$ where $l$ is the Szekeres\---Wilf number of $G$}
+  Let $G^*$ be the $l$-bounded acyclic orientation of $G$  (Algorithm \ref{alg:find-acyclic-bounded-orientation-general})\;
+  \While{$V(G^*)$ is non-empty} {
+  	Let $\alpha$ be a color from $L(v)$ where $v \in V(G^*)$\;
+  	$V_\alpha := \lbrace v \in V(G) \mid \alpha \in L(v) \rbrace$\;
+  	Let $D$ be the subgraph of $G^*$ that $V_\alpha$ spans\;
+  	Let $U$ be a kernel in $D$ (Algorithm \ref{alg:find-kernel-in-dags})\;
+  	Color the nodes in $U$ with color $\alpha$\;
+  	Remove $\alpha$ from $L(v)$ for all $v \in V_\alpha$\;
+  	Remove the colored nodes, that is, $V(G^*) := V(G^*) \setminus U$\;
+  }
+ \caption{$l$-list coloring of a $k$-band buffering cellular graph where $l$ is the Szekeres\---Wilf number of $G$}
+\end{algorithm}
+
 \subsection{Channel allocation in IEEE 802.11 systems}
 In IEEE 802.11 $2.4$ GHz band systems channel center frequencies are defined as follows \cite{ieee80211} (cf. Figure \ref{fig:channel-allocation}):
 $$\text{Channel center frequency } = 2403 + 5\cdot n_{ch} \text{ MHz} \quad (n_{ch} = 1,2,\ldots, 13).$$
