@@ -1,4 +1,6 @@
 import java.awt.Dimension;
+import java.io.Console;
+
 import javafx.util.Pair;
 import javax.swing.JFrame;
 import javax.swing.JApplet;
@@ -30,6 +32,11 @@ public class Main extends JApplet {
     public void init() {
         CellularGraphGenerator generator = new CellularGraphGenerator();
         UndirectedGraph<Pair<Integer, Integer>, DefaultEdge> cellularGraph = generator.generateGraph(100);
+        SzekeresWilf szekeresWilf = new SzekeresWilf();
+        UndirectedGraph<Pair<Integer, Integer>, DefaultEdge> cellularGraph4 = generator.generateGraph(3000);
+        szekeresWilf.powerGraph(cellularGraph4, 4);
+        int szw = szekeresWilf.calculateSzekeresWilfNumber(cellularGraph4);
+        System.out.println(szw);
         jgxAdapter = new JGraphXAdapter<>(cellularGraph);
         getContentPane().add(new mxGraphComponent(jgxAdapter));
         resize(DEFAULT_SIZE);
