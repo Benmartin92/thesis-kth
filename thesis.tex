@@ -52,6 +52,7 @@
 \newcommand{\simp}{\mathop{\mathrm{Simp}}}
 \newcommand{\graph}{\mathop{\mathrm{graph}}}
 \newcommand{\dom}{\mathop{\mathrm{dom}}}
+\newcommand{\adj}{\mathop{\mathrm{adj}}}
 \DeclareMathOperator*{\ch}{ch}
 
 % Tartalomjegyzék mélysége
@@ -120,7 +121,10 @@ I would also like to thank my parents for their continuous support throughout my
 \abstract{The optimal channel allocation problem in cellular networks is often formulated in a graph theoretic framework. One of its variants\---where each access point knows the list of its free channels\---is related the so-called list coloring problem. In spite of the fact that the list coloring problem is NP-complete for arbitrary graphs, we show that there exists a polynomial time algorithm for $k$-band buffering callular graphs; and as a corollary it turns out the choice number of such a graphs is at most $3k(k+1)/2+1$.
 
 In addition, we implement our algorithm as a Java application and carry out some measurements regarding 
+
++ TODO: + swedish abstract
 }
+\newpage
 \section{Introduction}
 In telecommunication one of the most challenging problems is the efficient allocation of available frequency. When the available bandwidth is limited, the efficient utilization of the frequency spectrum is a major concern. Due to the growing number of mobile Internet users, optimal channel allocation in cellular networks and their variants have been heavily researched in recent years \cite{Audhya:2011:SCA:1988563.1988571}.
 
@@ -389,18 +393,27 @@ From Galvin's theorem and Lemma \ref{lem:szekeres}, it immediately follows the f
 
 By exploiting the special structure of $1$-band buffering cellular graphs, we found that such graphs always have a node with $\deg(v) \leqslant 3$ (Lemma \ref{lem:degree-constraint}). Lemma \ref{lem:bounded-acyclic-orientation} used this property to prove that they admit a $3$-bounded acyclic orientation.
 
-Even though Algorithm \ref{alg:four-list-coloring} is designed for $1$-band buffering cellular graphs, the input graph $G$ can be easily modified such that running Algorithm \ref{alg:four-list-coloring} properly $l$-list-colors $G$ while it does not violate the $k$-band buffering requirement. The usual trick to do this is to construct a new graph $G'$ (as depicted in Figure \ref{fig:cellular-graph-extension}) from $G$ such that $V(G') := V(G)$ and
+Even though Algorithm \ref{alg:four-list-coloring} is designed for $1$-band buffering cellular graphs, the input graph $G$ can be easily modified such that running Algorithm \ref{alg:four-list-coloring} properly $l$-list-colors $G$ while it does not violate the $k$-band buffering requirement. The usual trick to do this is to construct a new graph $G^k$ (as depicted in Figure \ref{fig:cellular-graph-extension}) from $G$ such that $V(G^k) := V(G)$ and
 \begin{equation}\label{eq:graph-mod}
-(u,v) \in E(G') \text{ if and only if } d_{G}(u,v) \leqslant k
+(u,v) \in E(G^k) \text{ if and only if } d_{G}(u,v) \leqslant k
 \end{equation}
 \begin{figure}[!h]
 \centering
 \includegraphics[scale=0.09]{figures/cellular_graph_extension.png}
 \caption{The red node of the cellular graph is connected (with dashed edges) to its $2$-distance neighbors}\label{fig:cellular-graph-extension}
 \end{figure}
-where $d_{G}(u,v)$ is the distance between $u$ and $v$ in $G$, that is, the length of the shortest path that connects $u$ and $v$. It is trivial that running Algorithm \ref{alg:four-list-coloring} for $G'$ is equivalent to running a $k$-band buffering list-coloring algorithm  for $G$.
+where $d_{G}(u,v)$ is the distance between $u$ and $v$ in $G$, that is, the length of the shortest path that connects $u$ and $v$. It is trivial that running Algorithm \ref{alg:four-list-coloring} for $G^k$ is equivalent to running a $k$-band buffering list-coloring algorithm  for $G$.
 
-Obviously, we also need to modify Algorithm \ref{alg:find-acyclic-bounded-orientation} as we do not know the Szekeres\---Wilf number of $G'$. Algorithm \ref{alg:find-acyclic-bounded-orientation-general} simply modifies Algorithm \ref{alg:find-acyclic-bounded-orientation} by selecting a node with $\deg(v) = \delta(G^i)$ in each iteration $i$ which is the same step that Algorithm \ref{alg:szekeres-wilf-computation} carries out to compute the Szekeres\---Wilf number. Therefore the following theorem holds:
+\begin{defin} The construction in Equation \ref{eq:graph-mod} is called graph powering and it is notated by $G^k$. 
+\end{defin}
+
+The $k$th graph power of a graph $G$ can be calculated from the adjacency $\adj(G)$ matrix of $G$ in the following way \cite{power}:
+$$
+\adj(G^k) = \sum^k_{i=1} \adj(G)^i.
+$$
+\begin{note} From now on when we say $k$-band buffering cellular graph $G^k$ (or simply $G$), we mean the $k$th graph power $G^k$ that is constructed from a $1$-band buffering cellular graph $G$.
+\end{note}
+Obviously, we also need to modify Algorithm \ref{alg:find-acyclic-bounded-orientation} as we do not know the Szekeres\---Wilf number of $G^k$. Algorithm \ref{alg:find-acyclic-bounded-orientation-general} simply modifies Algorithm \ref{alg:find-acyclic-bounded-orientation} by selecting a node with $\deg(v) = \delta(G^i)$ in each iteration $i$ which is the same step that Algorithm \ref{alg:szekeres-wilf-computation} carries out to compute the Szekeres\---Wilf number. Therefore the following theorem holds:
 
 \begin{theo} Algorithm \ref{alg:find-acyclic-bounded-orientation-general} computes an $l$-bounded acyclic orientation of an arbitrary graph $G$ where $l$ is the Szekeres\---Wilf number of $G$.
 \end{theo}
@@ -431,12 +444,12 @@ Obviously, we also need to modify Algorithm \ref{alg:find-acyclic-bounded-orient
 
 The following question immediately arises: how large is the Szekeres\---Wilf number of $k$-band buffering cellular graphs? Unfortunately, we cannot answer this question, however the following theorem gives us an upper bound and as a corollary it turns out that $k$-band buffering cellular graphs are $(3(k+1)k/2+1)$-choosable.
 
-\begin{theo} Let $G$ be a $k$-band buffering cellular graph. Consider the graph $G'$ which is the modification of $G$ according to equation \ref{eq:graph-mod} then $G'$ has a node $v$ with $\deg(v) \leqslant 3(k+1)k/2$.
+\begin{theo} Let $G^k$ be a $k$-band buffering cellular graph. Then $G^k$ has a node $v$ with $\deg(v) \leqslant 3(k+1)k/2$.
 \end{theo}
-\begin{proof} Let $G$ be a $k$-band buffering cellular graph and $v$ any node of $G$. It is easy to see that the maximum number of $m$-distance neighbors of $v$ is $6m$. Therefore the maximum number of at most $k$-distance neighbors of $v$ is 
+\begin{proof} Let $G$ be a $1$-band buffering cellular graph and $v$ any node of $G$. It is easy to see that the maximum number of $m$-distance neighbors of $v$ is $6m$. Therefore the maximum number of at most $k$-distance neighbors of $v$ is 
 $$6+12+\ldots+6k=\frac{(6 + 6k)k}{2} = 3k(k+1).$$
-Let us select the same extremal point that we have selected in Lemma \ref{lem:degree-constraint}, that is, a node $v$ with maximal $x$- and $y$-coordinate. Figure \ref{fig:extremal-proof} and our hexagonal coordinate system (see Figure \ref{fig:assignment}) show that by moving either north, northeast or southeast, we increase either coordinate $x$ or $y$ that would violate the maximality of $v$. Since this region includes exactly the half of the possible at most $k$-distance neighbors of $v$, we can deduce that 
-$$\deg(v) \leqslant \frac{3(k+1)k}{2} \text{ in $G'$}$$ 
+Let us select the same extremal point that we have selected in Lemma \ref{lem:degree-constraint}, that is, a node $v$ with maximal $x$- and $y$-coordinate. Figure \ref{fig:extremal-proof} and our hexagonal coordinate system (see Figure \ref{fig:assignment}) show that by moving either north, northeast or southeast, we increase either coordinate $x$ or $y$ that would violate the maximality of $v$. Since this region includes exactly the half of the possible at most $k$-distance neighbors of $v$, we can deduce that
+$$\deg_{G^k}(v) \leqslant \frac{3(k+1)k}{2}$$ 
 as required.
 \begin{figure}[!h]
 \centering
@@ -444,18 +457,26 @@ as required.
 \caption{This figure visualizes that above the white diagonal we either increase coordinate $x$ or $y$ of the red hexagon.}\label{fig:extremal-proof}
 \end{figure}
 \end{proof}
-\begin{corollary} Let $G$ be a $k$-band buffering cellular graph then $G$ is $(3(k+1)k/2+1)$-choosable.
+\begin{corollary} Let $G^k$ be a $k$-band buffering cellular graph then $G^k$ is $(3(k+1)k/2+1)$-choosable.
 \end{corollary}
 It is worth mentioning that for $k=2$ we proved that a $2$-band buffering cellular graph is $10$-choosable which coincides with the result of \cite{7248845}.
 \subsection{Channel allocation in IEEE 802.11 systems}
 In IEEE 802.11 $2.4$ GHz band systems channel center frequencies are defined as follows \cite{ieee80211} (cf. Figure \ref{fig:channel-allocation}):
 $$\text{Channel center frequency } = 2403 + 5\cdot n_{ch} \text{ MHz} \quad (n_{ch} = 1,2,\ldots, 13).$$
-The number of non-overlapping channels with $22$ MHz channel width is $3$ (namely Channel $1, 6$ and $11$) meaning that an interference-free allocation is possible if and only if the interference graph $G$ has a chromatic number of $3$. In practice, this rarely happens due to the growing number of IEEE 802.11 access points which results in a very crowded deployment.
+The number of non-overlapping channels with $22$ MHz channel width is $3$ (namely Channel $1, 6$ and $11$) meaning that an interference-free allocation is possible if and only if the interference graph $G$ has a chromatic number of $3$. In practice, this rarely happens due to the growing number of IEEE 802.11 access points which results in very crowded deployments.
 \begin{figure}[!h]
 \centering
 \includegraphics[scale=0.3]{figures/wifi-freq.png}
 \caption{Channel allocation in the $2.4$ GHz Band (source: \url{https://en.wikipedia.org/wiki/List_of_WLAN_channels})}\label{fig:channel-allocation}
 \end{figure}
+
+Commercial access points usually implements some kind of automatic channel allocation method that tries to switch to the optimal channel by measuring the received signal strength indication (RSSI). Cisco calls its own method Dynamic Channel Assignment (DCA)\footnote{Radio Resource Management White Paper: \url{https://www.cisco.com/c/en/us/td/docs/wireless/controller/technotes/8-3/b_RRM_White_Paper.html}} that monitors the available channels, tracks changing conditions and based on that calculates a cost metric function (CM). This CM consists of interference, noise, user sensitivity threshold and load yielding a weighted signal-to-noise-plus-interference ratio (SNIR).
+
+Using this CM, the RF Group Leader (which is a designated access point to maintain the channel scheme in a Cisco infrastructure) ranks the access point by creating a list called Channel Plan Change Initiator (CPCI). DCA first picks the worst performing access point from the CPCI list and before moving on the next worst performing access points it selects a random one in between. Having selected an access points, DCA takes its $1$- and $2$-hop neighbors to see if the channel plan can be improved for the current CPCI.
+
+The general problem with such methods that they try (the whole method is not described in the white paper) optimize the channel utilization in a local neighborhood which might not lead to the global optimum.
+
+However, this CM can be used to identify the free channels (e.g. if they are below some constant) $L(v)$ at each access point $v$. A controller\---which knows the topology of the access points\---whould be able to run Algorithm \ref{alg:four-list-coloring} along with Algorithm \ref{alg:find-acyclic-bounded-orientation-general}. In addition, using the concept of graph powering we would be able to require $k$-band buffering interference-free allocations if there are enough channels (i.e. more than the Szekeres\---Wilf number of the access point topology graph).
 \section{Evaluations}
 \begin{table}[h!]
 \centering
