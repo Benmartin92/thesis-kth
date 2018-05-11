@@ -118,7 +118,7 @@ I would also like to thank my parents for their continuous support throughout my
 \tableofcontents
 \newpage
 \pagenumbering{arabic}
-\abstract{The optimal channel allocation problem in cellular networks is often formulated in a graph theoretic framework. One of its variants\---where each access point knows the list of its free channels\---is related the so-called list coloring problem and is closely related to the channel allocation of IEEE 802.11 systems. In spite of the fact that the list coloring problem is NP-complete for arbitrary graphs, we show that there exists a polynomial time algorithm that $l$-list colors $k$-band buffering callular graphs where $l$ is the Szekeres\---Wilf number of the graph. In addition, an upper bound for the choice number of such graph is obtained proving that $k$-band buffering cellular graphs are $(3k(k+1)/2+1)$-choosable.
+\abstract{The optimal channel allocation problem in cellular networks is often formulated in a graph theoretic framework. One of its variants\---where each access point knows the list of its free channels\---is related the so-called list coloring problem and is closely related to the channel allocation of IEEE 802.11 systems. In spite of the fact that the list coloring problem is NP-complete for arbitrary graphs, we show that there exists a polynomial time algorithm that $k$-list colors an arbitrary graph where $k$ is the Szekeres\---Wilf number of the graph. In addition, an upper bound for the choice number of $k$-band buffering cellular graphs is obtained proving that they are $(3k(k+1)/2+1)$-choosable.
 
 A Java application is implemented to compute the Szekeres\---Wilf number of randomly generated cellular graph in order to facilitate making further conjunctures of sharper upper bounds for the choice number.
 
@@ -132,12 +132,30 @@ Several variants of the channel allocation problem have been defined based on th
 
 Cellular network topologies are usually idealized as a certain geometric structure. The most common network structure is the hexagonal grid topology where each cell is represented by a regular hexagon (two cells are neighbors if they share a common boundary). In \cite{662943}, Sen, Roxborough, and Medidi exploited this special structure and proposed an algorithm that optimally solves the channel allocation problem in $k$-band buffering systems where $k$ is $1$ or $2$. Moreover, the algorithm has polynomial running time $O(p)$ where $p$ is the number of cells.
 
-R. Wang, et al. \cite{7248845} introduced a \textit{distinctly different} channel allocation problem from all the above-mentioned problems, by assuming a $2$-band buffering hexagonal cell topology (the interference graph created from this topology is called a cellular graph) where each cell has a fixed number of frequency channels (channels are either busy or free). They asked the following question: "\textit{What is smallest size of the set of free channels associated with the cells (nodes of the cellular graph) that can guarantee interference free channel assignment to all the nodes?}". This problem is related to one of the generalizations of the graph coloring problem, called list coloring. It turned out that the required number of free channels is between $8$ and $10$. In addition, two algorithms have been proposed to create an interference free assignment, that is, a list-coloring of the cellular graph. The first one is an integer linear programming formulation of the list coloring problem (and therefore it is not a polynomial algorithm), while the second one is a heuristic linear time algorithm that is, according to their experiment, within 12\% of the optimal solutions.
+R. Wang, et al. \cite{7248845} introduced a \textit{distinctly different} channel allocation problem from all the above-mentioned problems, by assuming a $2$-band buffering hexagonal cell topology (the interference graph $G$ created from this topology is called a cellular graph) where each cell has a fixed number of frequency channels (channels are either busy or free). They asked the following question: "\textit{What is smallest size of the set of free channels associated with the cells (nodes of the cellular graph) that can guarantee interference free channel assignment to all the nodes?}". This problem is related to one of the generalizations of the graph coloring problem, called list coloring. It turned out that the required number of free channels, that is, the choice number ($\ch(G)$) of $G$ is between $8$ and $10$.
 
-In this thesis, ...
+In this thesis, we extended this result by establishing a general upper bound for $k$-band buffering cellular graphs (Corollary \ref{cor:main-result}). We proved that the maximum required number of free channels is $3k(k+1)/2+1$ (for $k=2$, this gives back the result of \cite{7248845}). This bound along with the $k$-band buffering cellular graph chromatic number \cite{662943} give that the required number of free channels is between $3/4(k+1)^2$ and $3k(k+1)/2+1$ if $k$ is odd, otherwise the lower bound is $3/4(k+1)^2 + 1/4$. This asymptotically means that for sufficiently large $k$ the required number of free channels is between $\chi^k(G)$ and $2 \chi^k(G)$ where $G$ is a $k$-band buffering cellular graph and $\chi^k$ the distance-$k$ chromatic number.
+
+In addition, we have designed an algorithm (Algorithm \ref{alg:szekeres-list-coloring}) that $l$-list colors an arbitrary graph in polynomial time where $l$ is the Szekeres\---Wilf number of the graph. Since it is generally true that 
+$$\chi(G) \leqslant \ch(G) \leqslant l \leqslant 3k(k+1)/2+1$$
+if $G$ is a $k$-band buffering cellular graph, Algorithm \ref{alg:szekeres-list-coloring} requires less free channels than the established upper bound.
+
+Finally, in order to get a better picture of the relationship between the Szekeres\---Wilf number of $G$ and our upper bound, computer evaluations were run to calculate the Szekeres\---Wilf number in randomly generated cellular graphs.
+
+The rest of the thesis is organized as follows. Section \ref{ch:list-coloring} provides a comprehensive exposition of the mathematical model and preliminaries used to develop the theory of list-coloring in cellular graphs. This section introduces the concept of degree-bounded acyclic orientations and gives a short outlook on defective coloring as well.
+
+In Section \ref{sec:4-choosable}, an upper bound for the choice number of $1$-band buffering graphs is established proving that they are $4$-choosable. The computation of kernels in directed acyclic graphs is detailed. Finally, we close this part of the thesis by presenting a polynomial-time algorithm\---heavily based on Galvin's theorem\---that $4$-list colors $1$-band buffering cellular graphs.
+
+Section \ref{sec:k-band-case} extends the results of Section \ref{sec:4-choosable} by deriving the above mentioned upper bound and algorithm. Furthermore, an interesting application is indicated regarding the channel allocation in IEEE 802.11 systems.
+
+Our evaluation concerning the Szekeres\---Wilf number of cellular graphs are drawn in Section \ref{sec:eval}.
+
 \newpage
 \section{List coloring of $1$-band buffering cellular graphs} \label{ch:list-coloring}
 Section \ref{sec:math-model} introduces the mathematical framework of list coloring. In Section \ref{sec:orientation}, we construct a special acyclic orientation of a cellular graph that satisfies some outdegree bound. In addition, we will give a polynomial time algorithm that constructs such orientations in polynomial time. We end this section with the generalization of the same results for arbitrary graphs by introducing the Szekeres\---Wilf number. A weaker coloring technique called ''defective coloring'' that tolerates some error in the usual graph coloring is described in Section \ref{sec:defective}.
+
+\begin{note} Unless otherwise stated cellular graph means $1$-band buffering cellular graph.
+\end{note}
 
 \subsection{The mathematical model}\label{sec:math-model}
 In this section, we introduce the basic notions and definitions that are essential to formulate the problem in a graph-theoretic setting. We introduce the definitions cellular graph, list coloring and choice number which will play a central role in our investigations. An example of list coloring and some well known bounds for the choice number are also given.
@@ -383,7 +401,7 @@ In each iteration, we color the nodes in $U$ and remove one color. The color is 
 
 \paragraph*{References} Galvin's theorem with proof can be found in \cite{citeulike:395714} \textit{Lemma 5.4.3}.
 
-\section{The $k$-band buffering case and its application in IEEE 802.11 systems}
+\section{The $k$-band buffering case and its application in IEEE 802.11 systems}\label{sec:k-band-case}
 In this section, we generalize the current results for $k > 1$. In addition, we introduce a possible application of the presented algorithms.
 
 \subsection{$k$-band buffering cellular graphs are $(3(k+1)k/2+1)$-choosable}
@@ -415,15 +433,15 @@ $$
 \end{note}
 Obviously, we also need to modify Algorithm \ref{alg:find-acyclic-bounded-orientation} as we do not know the Szekeres\---Wilf number of $G^k$. Algorithm \ref{alg:find-acyclic-bounded-orientation-general} simply modifies Algorithm \ref{alg:find-acyclic-bounded-orientation} by selecting a node with $\deg(v) = \delta(G^i)$ in each iteration $i$ which is the same step that Algorithm \ref{alg:szekeres-wilf-computation} carries out to compute the Szekeres\---Wilf number. Therefore the following theorem holds:
 
-\begin{theo} Algorithm \ref{alg:find-acyclic-bounded-orientation-general} computes an $l$-bounded acyclic orientation of an arbitrary graph $G$ where $l$ is the Szekeres\---Wilf number of $G$.
+\begin{theo} Algorithm \ref{alg:find-acyclic-bounded-orientation-general} computes an $k$-bounded acyclic orientation of an arbitrary graph $G$ where $k$ is the Szekeres\---Wilf number of $G$.
 \end{theo}
 
 \begin{proof} Immediately follows from Algorithm \ref{alg:find-acyclic-bounded-orientation} and \ref{alg:szekeres-wilf-computation}.
 \end{proof}
 
 \begin{algorithm}[h!]\label{alg:find-acyclic-bounded-orientation-general}
- \KwData{A cellular graph $G = (V,E)$}
- \KwResult{An acyclic $l$-bounded orientation of $G$}
+ \KwData{A graph $G = (V,E)$}
+ \KwResult{An acyclic $k$-bounded orientation of $G$}
  $G^{(0)} := G$\;
  Initialize $f \colon V(G) \to \mathbb{N}$\;
  \For{$i\leftarrow 0$ \KwTo $|V(G)|-1$}{
@@ -439,7 +457,7 @@ Obviously, we also need to modify Algorithm \ref{alg:find-acyclic-bounded-orient
    $A := A \cup (v,u)$\;
    }   
  }
- \caption{Constructing an $l$-bounded acyclic orientation of a $k$-bounded cellular graph where $l$ is the Szekeres\---Wilf number of $G$}
+ \caption{Constructing a $k$-bounded acyclic orientation of an arbitrary graph $G$ where $k$ is the Szekeres\---Wilf number of $G$}
 \end{algorithm}
 
 The following question immediately arises: how large is the Szekeres\---Wilf number of $k$-band buffering cellular graphs? Unfortunately, we cannot answer this question, however the following theorem gives us an upper bound and as a corollary it turns out that $k$-band buffering cellular graphs are $(3(k+1)k/2+1)$-choosable.
@@ -457,16 +475,16 @@ as required.
 \caption{This figure visualizes that above the white diagonal we either increase coordinate $x$ or $y$ of the red hexagon.}\label{fig:extremal-proof}
 \end{figure}
 \end{proof}
-\begin{corollary} Let $G^k$ be a $k$-band buffering cellular graph then $G^k$ is $(3(k+1)k/2+1)$-choosable.
+\begin{corollary}\label{cor:main-result} Let $G^k$ be a $k$-band buffering cellular graph then $G^k$ is $(3(k+1)k/2+1)$-choosable.
 \end{corollary}
 It is worth mentioning that for $k=2$ we proved that a $2$-band buffering cellular graph is $10$-choosable which coincides with the result of \cite{7248845}. 
 
-Now, we have everything to modify Algorithm \ref{alg:four-list-coloring} such that it handles $k$-band buffering graphs. Algorithm \ref{alg:szekeres-list-coloring} accepts lists of size $3k(k+1)/2+1$, however it is possible run Algorithm \ref{alg:szekeres-wilf-computation} to precompute the Szekeres\---Wilf number of the current $k$-band buffering graph thereby decreasing the initial list sizes.
+Now, we have everything to modify Algorithm \ref{alg:four-list-coloring} such that it can handle arbitrary graphs and thus $k$-band buffering graphs. Algorithm \ref{alg:szekeres-list-coloring} would accepts list of size $3k(k+1)/2+1$, however it is possible to run Algorithm \ref{alg:szekeres-wilf-computation} to precompute the Szekeres\---Wilf number of the current $k$-band buffering graph thereby decreasing the initial list sizes.
 
 \begin{algorithm}\label{alg:szekeres-list-coloring}
- \KwData{A $k$-band buffering cellular graph $G$ and a set of colors $L(v)$ for all $v \in V(G)$ with $|L(v)| \geqslant 3k(k+1)/2+1$}
- \KwResult{$l$-list coloring of $G$ where $l$ is the Szekeres\---Wilf number of $G$}
-  Let $G^*$ be the $l$-bounded acyclic orientation of $G$  (Algorithm \ref{alg:find-acyclic-bounded-orientation-general})\;
+ \KwData{A graph $G$ and a set of colors $L(v)$ for all $v \in V(G)$ with $|L(v)| \geqslant k+1$ where $k$ is the Szekeres\---Wilf number of $G$}
+ \KwResult{$(k+1)$-list coloring of $G$}
+  Let $G^*$ be the $k$-bounded acyclic orientation of $G$  (Algorithm \ref{alg:find-acyclic-bounded-orientation-general})\;
   \While{$V(G^*)$ is non-empty} {
   	Let $\alpha$ be a color from $L(v)$ where $v \in V(G^*)$\;
   	$V_\alpha := \lbrace v \in V(G) \mid \alpha \in L(v) \rbrace$\;
@@ -476,7 +494,7 @@ Now, we have everything to modify Algorithm \ref{alg:four-list-coloring} such th
   	Remove $\alpha$ from $L(v)$ for all $v \in V_\alpha$\;
   	Remove the colored nodes, that is, $V(G^*) := V(G^*) \setminus U$\;
   }
- \caption{$l$-list coloring of a $k$-band buffering cellular graph where $l$ is the Szekeres\---Wilf number of $G$}
+ \caption{$(k+1)$-list coloring of $G$ where $k$ is the Szekeres\---Wilf number of $G$}
 \end{algorithm}
 
 \subsection{Channel allocation in IEEE 802.11 systems}
@@ -489,14 +507,14 @@ The number of non-overlapping channels with $22$ MHz channel width is $3$ (namel
 \caption{Channel allocation in the $2.4$ GHz Band (source: \url{https://en.wikipedia.org/wiki/List_of_WLAN_channels})}\label{fig:channel-allocation}
 \end{figure}
 
-Commercial access points usually implements some kind of automatic channel allocation method that tries to switch to the optimal channel by measuring the received signal strength indication (RSSI). Cisco calls its own method Dynamic Channel Assignment (DCA)\footnote{Radio Resource Management White Paper: \url{https://www.cisco.com/c/en/us/td/docs/wireless/controller/technotes/8-3/b_RRM_White_Paper.html}} that monitors the available channels, tracks changing conditions and based on that calculates a cost metric function (CM). This CM consists of interference, noise, user sensitivity threshold and load yielding a weighted signal-to-noise-plus-interference ratio (SNIR).
+Commercial access points usually implements some kind of automatic channel allocation method that tries to switch to the optimal channel by measuring the received signal strength indication (RSSI). Cisco calls its own method Dynamic Channel Assignment (DCA)\footnote{Cisco Radio Resource Management White Paper: \url{https://www.cisco.com/c/en/us/td/docs/wireless/controller/technotes/8-3/b_RRM_White_Paper.html}} that monitors the available channels, tracks changing conditions and based on that calculates a cost metric function (CM). This CM consists of interference, noise, user sensitivity threshold and load yielding a weighted signal-to-noise-plus-interference ratio (SNIR).
 
 Using this CM, the RF Group Leader (which is a designated access point to maintain the channel scheme in a Cisco infrastructure) ranks the access point by creating a list called Channel Plan Change Initiator (CPCI). DCA first picks the worst performing access point from the CPCI list and before moving on the next worst performing access points it selects a random one in between. Having selected an access points, DCA takes its $1$- and $2$-hop neighbors to see if the channel plan can be improved for the current CPCI.
 
 The general problem with such methods that they try (the whole method is not described in the white paper) optimize the channel utilization in a local neighborhood which might not lead to the global optimum.
 
-However, this CM can be used to identify the free channels (e.g. if they are below some constant) $L(v)$ at each access point $v$. A controller\---which knows the topology of the access points\---whould be able to run Algorithm \ref{alg:four-list-coloring} along with Algorithm \ref{alg:find-acyclic-bounded-orientation-general}. In addition, using the concept of graph powering we would be able to require $k$-band buffering interference-free allocations if there are enough channels (i.e. more than the Szekeres\---Wilf number of the access point topology graph).
-\section{Evaluations}
+However, this CM can be used to identify the free channels (e.g. if they are below some constant) $L(v)$ at each access point $v$. A controller\---which knows the topology of the access points\---whould be able to run Algorithm \ref{alg:szekeres-list-coloring}. In addition, using the concept of graph powering we would be able to require $k$-band buffering interference-free allocations if there are enough channels (i.e. more than the Szekeres\---Wilf number of the access point topology graph).
+\section{Evaluations}\label{sec:eval}
 \begin{table}[h!]
 \centering
 \begin{tabular}{|c|c|c|}
