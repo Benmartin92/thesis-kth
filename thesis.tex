@@ -118,11 +118,12 @@ I would also like to thank my parents for their continuous support throughout my
 \tableofcontents
 \newpage
 \pagenumbering{arabic}
-\abstract{The optimal channel allocation problem in cellular networks is often formulated in a graph theoretic framework. One of its variants\---where each access point knows the list of its free channels\---is related the so-called list coloring problem and is closely related to the channel allocation of IEEE 802.11 systems. In spite of the fact that the list coloring problem is NP-complete for arbitrary graphs, we show that there exists a polynomial time algorithm that $k$-list colors an arbitrary graph where $k$ is the Szekeres\---Wilf number of the graph. In addition, an upper bound for the choice number of $k$-band buffering cellular graphs is obtained proving that they are $(3k(k+1)/2+1)$-choosable.
+\abstract{
+\textbf{In English:} The optimal channel allocation problem in cellular networks is often formulated in a graph theoretic framework. One of its variants\---where each access point knows the list of its free channels\---is related the so-called list coloring problem and is closely related to the channel allocation of IEEE 802.11 systems. In spite of the fact that the list coloring problem is NP-complete for arbitrary graphs, we show that there exists a polynomial time algorithm that $k$-list colors an arbitrary graph where $k$ is the Szekeres\---Wilf number of the graph. In addition, an upper bound for the choice number of $k$-band buffering cellular graphs is obtained proving that they are $(3k(k+1)/2+1)$-choosable.
 
 A Java application is implemented to compute the Szekeres\---Wilf number of randomly generated cellular graph in order to facilitate making further conjunctures of sharper upper bounds for the choice number.
 
-+ TODO: + swedish abstract
+\textbf{In Swedish:}
 }
 \newpage
 \section{Introduction}
@@ -243,7 +244,7 @@ What is left to show is that $\deg^+(v) \leqslant 3$. At each step we select a n
 \end{proof}
 
 It is easy to see that the proof of this lemma can be transformed into a polynomial time algorithm. We outline the algorithm (Algorithm \ref{alg:find-acyclic-bounded-orientation}) that is based on the proof of Lemma \ref{lem:bounded-acyclic-orientation} and then we prove that its running time is $O(|V(G)| + |E(G)|)$.
-\begin{algorithm}\label{alg:find-acyclic-bounded-orientation}
+\begin{algorithm}[h!]\label{alg:find-acyclic-bounded-orientation}
  \KwData{A cellular graph $G = (V,E)$}
  \KwResult{An acyclic $3$-bounded orientation of $G$}
  $G^{(0)} := G$\;
@@ -282,7 +283,7 @@ Immediately follows that if we omit the cellular graph assumption\---having know
 
 Another interesting question is how to compute the Szekeres\---Wilf number of a graph. The following algorithm \cite{Matula:1983:SOC:2402.322385} computes this number in linear time by repeatedly removing the minimum-degree nodes.
 
-\begin{algorithm}\label{alg:szekeres-wilf-computation}
+\begin{algorithm}[h!]\label{alg:szekeres-wilf-computation}
  \KwData{An arbitrary graph $G = (V,E)$}
  \KwResult{The Szekeres\---Wilf number of $G$ in $szw$}
  $H^{(1)} := G$\;
@@ -348,7 +349,7 @@ It has been shown that finding a kernel in an arbitrary graph is $\mathrm{NP}$-c
 1) If $v \in K$ then its neighbors are marked. Since we do not add marked nodes to $K$, it is always independent.
 2) When $v$ is unmarked and we add it to $K$ all of its neighbors come after it in the topological order (otherwise $v$ would have already been marked), that is, $v$ is connected to its neighbors by forward edges.
 \end{proof}
-\begin{algorithm}\label{alg:find-kernel-in-dags}
+\begin{algorithm}[h!]\label{alg:find-kernel-in-dags}
  \KwData{A directed acyclic graph $G = (V,A)$}
  \KwResult{A kernel $K \subseteq V(G)$}
  $T := \text{the topological order of $V(G)$}$\;
@@ -375,7 +376,7 @@ In particular, if $G$ is a cellular graph and $|L(v)| \geqslant 4$ for all $v \i
 \begin{proof}
 Let $G^*$ be the $3$-bounded acyclic orientation of $G$ (Lemma \ref{lem:bounded-acyclic-orientation}), that is, $d^+(v) \leqslant 3$. We apply induction on $|V(G^*)|$. For $|V(G^*)|=0$, the empty coloring is good. Let us assume that we know how to color $G^*$ with $|V(G^*)| < n$ and consider the case when $|V(G^*)|=n$. Let $\alpha$ be any color from one of the colors sets and set $V_\alpha$ to $\lbrace v \in V(G) \mid \alpha \in L(v) \rbrace$. Consider the non-empty subgraph $D$ of $G^*$ that is spanned by $V_\alpha$. Since $G^*$ is a DAG, it is kernel-perfect (Lemma \ref{lem:kernel-lemma}), therefore $D$ has a kernel $U \neq \emptyset$. Assign the color $\alpha$ to every node in $U$ and remove $\alpha$ from $L(v)$ for all $v \in V_\alpha$. Since $U$ is independent, and we removed $\alpha$, it follows that we did not (and we will not) violate the rules of the graph coloring. After that, remove $U$ from $D$, since every node in $V(D) \setminus U$ sends an edge to $U$, having removed $U$ from $D$, we decreased the outdegree of each node in $D$ by $1$. Since the modified lists $L'(v)$ $(v \in V_\alpha)$ satisfy $d^+(v) < |L'(v)|$ for all $v \in V(D) \setminus U$, we can use our induction hypothesis to color $V(G^*) \setminus U$.
 \end{proof}
-\begin{algorithm}\label{alg:four-list-coloring}
+\begin{algorithm}[h!]\label{alg:four-list-coloring}
  \KwData{A cellular graph $G$ and a set of colors $L(v)$ for all $v \in V(G)$ with $|L(v)| \geqslant 4$}
  \KwResult{$4$-list coloring of $G$}
   Let $G^*$ be the $3$-bounded acyclic orientation of $G$ (Algorithm \ref{alg:find-acyclic-bounded-orientation})\;
@@ -481,7 +482,7 @@ It is worth mentioning that for $k=2$ we proved that a $2$-band buffering cellul
 
 Now, we have everything to modify Algorithm \ref{alg:four-list-coloring} such that it can handle arbitrary graphs and thus $k$-band buffering graphs. Algorithm \ref{alg:szekeres-list-coloring} would accepts list of size $3k(k+1)/2+1$, however it is possible to run Algorithm \ref{alg:szekeres-wilf-computation} to precompute the Szekeres\---Wilf number of the current $k$-band buffering graph thereby decreasing the initial list sizes.
 
-\begin{algorithm}\label{alg:szekeres-list-coloring}
+\begin{algorithm}[h!]\label{alg:szekeres-list-coloring}
  \KwData{A graph $G$ and a set of colors $L(v)$ for all $v \in V(G)$ with $|L(v)| \geqslant k+1$ where $k$ is the Szekeres\---Wilf number of $G$}
  \KwResult{$(k+1)$-list coloring of $G$}
   Let $G^*$ be the $k$-bounded acyclic orientation of $G$  (Algorithm \ref{alg:find-acyclic-bounded-orientation-general})\;
@@ -515,24 +516,22 @@ The general problem with such methods that they try (the whole method is not des
 
 However, this CM can be used to identify the free channels (e.g. if they are below some constant) $L(v)$ at each access point $v$. A controller\---which knows the topology of the access points\---whould be able to run Algorithm \ref{alg:szekeres-list-coloring}. In addition, using the concept of graph powering we would be able to require $k$-band buffering interference-free allocations if there are enough channels (i.e. more than the Szekeres\---Wilf number of the access point topology graph).
 \section{Evaluations}\label{sec:eval}
+The aim of this evaluation is to compare our upper bound established in Corollary \ref{cor:main-result} with the Szekeres\---Wilf number of $k$-band buffering cellular graphs. The reason we are interested in the relationship of these two numbers is due to the fact the a graph has Szekeres\---Wilf number of $k$ if and only if it has a $k$-bounded acyclic orientation. One direction has already been proven in Lemma \ref{alg:find-acyclic-bounded-orientation}. Now, assume that $G$ has $k$-bounded acyclic orientation, we need to prove that if $H$ is a nonempty subgraph of $G$ then $H$ has a node $v$ with $\deg_H(v) \leqslant k$. Since $G$ is a DAG, it has at least one node $v$ with $\deg_{H}^-(v)=0$, however $\deg^+(v) \leqslant k$ and therefore $\deg_H(v) = \deg_{H}^+(v) + \deg_{H}^-(v) \leqslant k$. This means the we cannot improve Algorithm \ref{alg:szekeres-list-coloring} by constructing better acyclic orientations.
+
+Another benefit of this equivalence is that it is enough to find one graph where our upper bound equals the Szekeres\---Wilf number and it immediately follows that bound is sharp.
 \begin{table}[h!]
 \centering
 \begin{tabular}{|c|c|c|}
 \hline
  $k$& Theoretical upper bound $(3k(k+1)/2)$ & Szekeres\---Wilf number \\ \hline
- 1&  3&   \\ \hline
- 2&  9&  \\ \hline
- 3&  18&  \\ \hline
- 4&  30&  \\ \hline
- 5&  45&  \\ \hline
- 6&  63&  \\ \hline
- 7&  84&  \\ \hline
- 8&  108&  \\ \hline
- 9&  135&  \\ \hline
- 10&  165&  \\ \hline
+ 1&  3&  3 \\ \hline
+ 2&  9&  9\\ \hline
+ 3&  18& 18\\ \hline
+ 4&  30& 30\\ \hline
+ 5&  45& 44 \\ \hline
 \end{tabular}
 \label{table:eval}
-\caption{The output of Algorithm \ref{alg:szekeres-wilf-computation} implemented as a Java application using a randomly generated $k$-band buffering cellular graph of $1000$ nodes}
+\caption{The output of Algorithm \ref{alg:szekeres-wilf-computation} implemented as a Java application using a randomly generated $k$-band buffering cellular graph of $3000$ nodes}
 \end{table}
 \newpage
 \printbibliography
