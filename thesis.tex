@@ -110,9 +110,15 @@ Stockholm, Sweden\\2018}
 \pagenumbering{Roman}
 \section*{Acknowledgements}
 %\vspace*{\fill} 
-First of all, I would like to express my deep gratitude to Dávid Kunszenti-Kovács, my thesis supervisor, for his patient guidance.
+First of all, I would like to express my deep gratitude to Dávid Kunszenti-Kovács, my thesis supervisor, for his patient guidance. I would like to thank Marina Petrova and Göran Andersson for their helpful comments.
 
-I would also like to thank my parents for their continuous support throughout my studies.
+I would also like to thank my parents for their continuous support throughout my studies in Hungary, Italy and Sweden.
+
+\begin{flushright}
+Benjámin Martin Seregi
+
+Budapest, 12 May 2018
+\end{flushright}
 %\vspace*{\fill}
 \newpage
 \tableofcontents
@@ -121,7 +127,7 @@ I would also like to thank my parents for their continuous support throughout my
 \abstract{
 \textbf{In English:} The optimal channel allocation problem in cellular networks is often formulated in a graph theoretic framework. One of its variants\---where each access point knows the list of its free channels\---is related the so-called list coloring problem and is closely related to the channel allocation of IEEE 802.11 systems. In spite of the fact that the list coloring problem is NP-complete for arbitrary graphs, we show that there exists a polynomial time algorithm that $k$-list colors an arbitrary graph where $k$ is the Szekeres\---Wilf number of the graph. In addition, an upper bound for the choice number of $k$-band buffering cellular graphs is obtained proving that they are $(3k(k+1)/2+1)$-choosable.
 
-A Java application is implemented to compute the Szekeres\---Wilf number of randomly generated cellular graph in order to facilitate making further conjunctures of sharper upper bounds for the choice number.
+A Java application is implemented to compute the Szekeres\---Wilf number of generated cellular graph in order to facilitate making further conjunctures of sharper upper bounds for the choice number.
 
 \textbf{In Swedish:}
 }
@@ -463,7 +469,7 @@ Obviously, we also need to modify Algorithm \ref{alg:find-acyclic-bounded-orient
 
 The following question immediately arises: how large is the Szekeres\---Wilf number of $k$-band buffering cellular graphs? Unfortunately, we cannot answer this question, however the following theorem gives us an upper bound and as a corollary it turns out that $k$-band buffering cellular graphs are $(3(k+1)k/2+1)$-choosable.
 
-\begin{theo} Let $G^k$ be a $k$-band buffering cellular graph. Then $G^k$ has a node $v$ with $\deg(v) \leqslant 3(k+1)k/2$.
+\begin{theo}\label{theo:extremal-degree} Let $G^k$ be a $k$-band buffering cellular graph. Then $G^k$ has a node $v$ with $\deg(v) \leqslant 3(k+1)k/2$.
 \end{theo}
 \begin{proof} Let $G$ be a $1$-band buffering cellular graph and $v$ any node of $G$. It is easy to see that the maximum number of $m$-distance neighbors of $v$ is $6m$. Therefore the maximum number of at most $k$-distance neighbors of $v$ is 
 $$6+12+\ldots+6k=\frac{(6 + 6k)k}{2} = 3k(k+1).$$
@@ -515,8 +521,8 @@ Using this CM, the RF Group Leader (which is a designated access point to mainta
 The general problem with such methods that they try (the whole method is not described in the white paper) optimize the channel utilization in a local neighborhood which might not lead to the global optimum.
 
 However, this CM can be used to identify the free channels (e.g. if they are below some constant) $L(v)$ at each access point $v$. A controller\---which knows the topology of the access points\---whould be able to run Algorithm \ref{alg:szekeres-list-coloring}. In addition, using the concept of graph powering we would be able to require $k$-band buffering interference-free allocations if there are enough channels (i.e. more than the Szekeres\---Wilf number of the access point topology graph).
-\section{Evaluations}\label{sec:eval}
-The aim of this evaluation is to compare our upper bound established in Corollary \ref{cor:main-result} with the Szekeres\---Wilf number of $k$-band buffering cellular graphs. The reason we are interested in the relationship of these two numbers is due to the fact the a graph has Szekeres\---Wilf number of $k$ if and only if it has a $k$-bounded acyclic orientation. One direction has already been proven in Lemma \ref{alg:find-acyclic-bounded-orientation}. Now, assume that $G$ has $k$-bounded acyclic orientation, we need to prove that if $H$ is a nonempty subgraph of $G$ then $H$ has a node $v$ with $\deg_H(v) \leqslant k$. Since $G$ is a DAG, it has at least one node $v$ with $\deg_{H}^-(v)=0$, however $\deg^+(v) \leqslant k$ and therefore $\deg_H(v) = \deg_{H}^+(v) + \deg_{H}^-(v) \leqslant k$. This means the we cannot improve Algorithm \ref{alg:szekeres-list-coloring} by constructing better acyclic orientations.
+\section{Evaluation}\label{sec:eval}
+The aim of this evaluation is to compare our upper bound established in Theorem \ref{theo:extremal-degree} with the Szekeres\---Wilf number of $k$-band buffering cellular graphs. The reason we are interested in the relationship of these two numbers is due to the fact the a graph has Szekeres\---Wilf number of $k$ if and only if it has a $k$-bounded acyclic orientation. One direction has already been proven in Lemma \ref{alg:find-acyclic-bounded-orientation}. Now, assume that $G$ has $k$-bounded acyclic orientation, we need to prove that if $H$ is a nonempty subgraph of $G$ then $H$ has a node $v$ with $\deg_H(v) \leqslant k$. Since $G$ is a DAG, it has at least one node $v$ with $\deg_{H}^-(v)=0$, however $\deg^+(v) \leqslant k$ and therefore $\deg_H(v) = \deg_{H}^+(v) + \deg_{H}^-(v) \leqslant k$. This means the we cannot improve Algorithm \ref{alg:szekeres-list-coloring} by constructing better acyclic orientations.
 
 Another benefit of this equivalence is that it is enough to find one graph where our upper bound equals the Szekeres\---Wilf number and it immediately follows that bound is sharp.
 \begin{table}[h!]
@@ -531,8 +537,11 @@ Another benefit of this equivalence is that it is enough to find one graph where
  5&  45& 44 \\ \hline
 \end{tabular}
 \label{table:eval}
-\caption{The output of Algorithm \ref{alg:szekeres-wilf-computation} implemented as a Java application using a randomly generated $k$-band buffering cellular graph of $3000$ nodes}
+\caption{The output of Algorithm \ref{alg:szekeres-wilf-computation} implemented as a Java application using a generated $k$-band buffering cellular graph of $3000$ nodes}
 \end{table}
+
+Table \ref{table:eval} shows that the bound is sharp for $k=1,2,3,4$ and for $5$ they are very close. This result somehow suggest that they might be equal for $k > 4$ using a different generated graph. This would mean that the best attainable list-coloring with Galvin's approach requires at least $3k(k+1)/2+1$ list size.
+\paragraph*{References.} The graph generator source code is available at \url{https://github.com/Benmartin92/thesis-kth} (CellularGraphGenerator.java)).
 \newpage
 \printbibliography
 \addcontentsline{toc}{section}{References}
