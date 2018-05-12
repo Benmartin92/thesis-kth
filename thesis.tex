@@ -166,11 +166,11 @@ Section \ref{sec:math-model} introduces the mathematical framework of list color
 
 \subsection{The mathematical model}\label{sec:math-model}
 In this section, we introduce the basic notions and definitions that are essential to formulate the problem in a graph-theoretic setting. We introduce the definitions cellular graph, list coloring and choice number which will play a central role in our investigations. An example of list coloring and some well known bounds for the choice number are also given.
-\begin{defin} A graph $G$ is a  \textit{cellular graph} (see Fig. \ref{fig:cellular-graph}) if it is constructed from the hexagonal cell topology in the following way: each cell is a node and two nodes are connected if and only if they share a common boundary.
+\begin{defin} A graph $G$ is a  \textit{cellular graph} (see Figure \ref{fig:cellular-graph}) if it is constructed from the hexagonal cell topology in the following way: each cell is a node and two nodes are connected if and only if they share a common boundary.
 \end{defin}
 \begin{figure}[!h]
 \centering
-\includegraphics[scale=0.15]{figures/cellular-graph.png}
+\includegraphics[scale=1]{figures/cellular-graph.pdf}
 \caption{An example of a cellular graph}\label{fig:cellular-graph}
 \end{figure}
 \begin{defin} A cellular network is $k$\textit{-band buffering} if the interference extends up to $k$ cells.
@@ -184,7 +184,7 @@ It is worth pointing out that proving a graph to be $k$-choosable is more diffic
 To construct such an example, let us consider the graph in Figure \ref{fig:2-colorable-ch3}. Its coloring immediately shows that $\chi(G)=2$. For the choice number imagine that the numbers inside the nodes correspond to the list of available colors at each node.
 \begin{figure}[!h]
 \centering
-\includegraphics[scale=0.3]{figures/2-colorable-3ch.png}
+\includegraphics[scale=1.7]{figures/2-colorable-3ch.pdf}
 \caption{A non $2$-choosable graph $G$ with $\chi(G)=2$}\label{fig:2-colorable-ch3}
 \end{figure}
 Selecting either color $1$ or color $3$ in the upper-left corner leads to a conflict in the coloring and thus $G$ is not $2$-choosable.
@@ -219,10 +219,10 @@ Let $G$ be a cellular graph. Then $G$ has a node $v$ such that $\deg(v) \leqslan
 \end{lem}
 
 \begin{proof} Let us consider the planar drawing of the graph $G$ which corresponds to its hexagonal topology.
-Let $v$ be any node of $G$ and we assign $(0,0)$ to this node. We assign coordinates to every node starting from node $v$ in the following way. If a node $w$ is to the north of node $v$ then the coordinates of node $w$ is equal to the coordinates of node $v$ plus $(0,1)$. We summarize this method in Fig. \ref{fig:assignment} according to the cardinal directions.
+Let $v$ be any node of $G$ and we assign $(0,0)$ to this node. We assign coordinates to every node starting from node $v$ in the following way. If a node $w$ is to the north of node $v$ then the coordinates of node $w$ is equal to the coordinates of node $v$ plus $(0,1)$. We summarize this method in Figure \ref{fig:assignment} according to the cardinal directions.
 \begin{figure}[!h]
 \centering
-\includegraphics[scale=0.15]{figures/hexagonal-coordinate-system.png}
+\includegraphics[scale=1]{figures/hexagonal-coordinate-system.pdf}
 \caption{Hexagonal coordinate system}\label{fig:assignment}
 \end{figure}
 By applying this method to every node, we get a coordinate system within our hexagonal topology. Since there are finitely many node in $V(G)$, we can select the maximal node by selecting the node with maximal $x$- and $y$-coordinate, that is, a node $w$ with the following property: if $(x_1,y_1)$ is the coordinates of $w$ and $v \neq w$ is another node with the coordinates $(x_2,y_2)$ then $x_1 \geqslant x_2$ and $y_1 > y_2$ are satisfied.
@@ -424,7 +424,7 @@ Even though Algorithm \ref{alg:four-list-coloring} is designed for $1$-band buff
 \end{equation}
 \begin{figure}[!h]
 \centering
-\includegraphics[scale=0.09]{figures/cellular_graph_extension.png}
+\includegraphics[scale=1]{figures/cellular_graph_extension.pdf}
 \caption{The red node of the cellular graph is connected (with dashed edges) to its $2$-distance neighbors}\label{fig:cellular-graph-extension}
 \end{figure}
 where $d_{G}(u,v)$ is the distance between $u$ and $v$ in $G$, that is, the length of the shortest path that connects $u$ and $v$. It is trivial that running Algorithm \ref{alg:four-list-coloring} for $G^k$ is equivalent to running a $k$-band buffering list-coloring algorithm  for $G$.
@@ -478,7 +478,7 @@ $$\deg_{G^k}(v) \leqslant \frac{3(k+1)k}{2}$$
 as required.
 \begin{figure}[!h]
 \centering
-\includegraphics[scale=0.09]{figures/proof-k-band-buffering.png}
+\includegraphics[scale=1]{figures/proof-k-band-buffering.pdf}
 \caption{This figure visualizes that above the white diagonal we either increase coordinate $x$ or $y$ of the red hexagon.}\label{fig:extremal-proof}
 \end{figure}
 \end{proof}
