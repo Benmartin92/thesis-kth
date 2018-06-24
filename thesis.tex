@@ -18,6 +18,7 @@
 \usepackage{geometry}
 \usepackage[]{algorithm2e}
 \usepackage{tikz}
+\usepackage{enumerate}
 \usetikzlibrary{positioning,chains,fit,shapes,calc}
  
 % Sorköz és teljes oldalas kitöltés
@@ -127,7 +128,7 @@ Budapest, 12 May 2018
 \abstract{
 \textbf{In English:} The optimal channel allocation problem in cellular networks is often formulated in a graph theoretic framework. One of its variants\---where each access point knows the list of its free channels\---is related the so-called list coloring problem and is closely related to the channel allocation of IEEE 802.11 systems. In spite of the fact that the list coloring problem is NP-complete for arbitrary graphs, we show that there exists a polynomial time algorithm that $k$-list colors an arbitrary graph where $k$ is the Szekeres\---Wilf number of the graph. In addition, an upper bound for the choice number of $k$-band buffering cellular graphs is obtained proving that they are $(3k(k+1)/2+1)$-choosable.
 
-A Java application is implemented to compute the Szekeres\---Wilf number of generated cellular graph in order to facilitate making further conjunctures of sharper upper bounds for the choice number.
+A Java application is implemented to compute the Szekeres\---Wilf number of generated cellular graph in order to facilitate making further conjectures of sharper upper bounds for the choice number.
 
 \textbf{In Swedish:}
 }
@@ -141,21 +142,78 @@ Cellular network topologies are usually idealized as a certain geometric structu
 
 R. Wang, et al. \cite{7248845} introduced a \textit{distinctly different} channel allocation problem from all the above-mentioned problems, by assuming a $2$-band buffering hexagonal cell topology (the interference graph $G$ created from this topology is called a cellular graph) where each cell has a fixed number of frequency channels (channels are either busy or free). They asked the following question: "\textit{What is smallest size of the set of free channels associated with the cells (nodes of the cellular graph) that can guarantee interference free channel assignment to all the nodes?}". This problem is related to one of the generalizations of the graph coloring problem, called list coloring. It turned out that the required number of free channels, that is, the choice number ($\ch(G)$) of $G$ is between $8$ and $10$.
 
-In this thesis, we extended this result by establishing a general upper bound for $k$-band buffering cellular graphs (Corollary \ref{cor:main-result}). We proved that the maximum required number of free channels is $3k(k+1)/2+1$ (for $k=2$, this gives back the result of \cite{7248845}). This bound along with the $k$-band buffering cellular graph chromatic number \cite{662943} give that the required number of free channels is between $3/4(k+1)^2$ and $3k(k+1)/2+1$ if $k$ is odd, otherwise the lower bound is $3/4(k+1)^2 + 1/4$. This asymptotically means that for sufficiently large $k$ the required number of free channels is between $\chi^k(G)$ and $2 \chi^k(G)$ where $G$ is a $k$-band buffering cellular graph and $\chi^k$ the distance-$k$ chromatic number.
+In this thesis, we extended this result by establishing a general upper bound for $k$-band buffering cellular graphs (Corollary \ref{cor:main-result}). We proved that the maximum required number of free channels is $\frac{3k(k+1)}{2}+1$ (for $k=2$, this gives back the result of \cite{7248845}). This bound along with the $k$-band buffering cellular graph chromatic number \cite{662943} give that the required number of free channels is between $\frac{3(k+1)^2}{4}$ and $\frac{3k(k+1)}{2}+1$ if $k$ is odd, otherwise the lower bound is $\frac{3(k+1)^2}{4} + 1/4$. This asymptotically means that for sufficiently large $k$ the required number of free channels is between $\chi^k(G)$ and $2 \chi^k(G)$ where $G$ is a $k$-band buffering cellular graph and $\chi^k$ the distance-$k$ chromatic number.
 
 In addition, we have designed an algorithm (Algorithm \ref{alg:szekeres-list-coloring}) that $l$-list colors an arbitrary graph in polynomial time where $l$ is the Szekeres\---Wilf number of the graph. Since it is generally true that 
-$$\chi(G) \leqslant \ch(G) \leqslant l \leqslant 3k(k+1)/2+1$$
+$$\chi(G) \leqslant \ch(G) \leqslant l \leqslant \frac{3k(k+1)}{2}+1$$
 if $G$ is a $k$-band buffering cellular graph, Algorithm \ref{alg:szekeres-list-coloring} requires less free channels than the established upper bound.
 
 Finally, in order to get a better picture of the relationship between the Szekeres\---Wilf number of $G$ and our upper bound, computer evaluations were run to calculate the Szekeres\---Wilf number in randomly generated cellular graphs.
 
 The rest of the thesis is organized as follows. Section \ref{ch:list-coloring} provides a comprehensive exposition of the mathematical model and preliminaries used to develop the theory of list-coloring in cellular graphs. This section introduces the concept of degree-bounded acyclic orientations and gives a short outlook on defective coloring as well.
 
+Section \ref{ch:list-coloring} and \ref{sec:4-choosable} are an extended version of my II2202 Research Methodology and Scientific Writing report\footnote{Repository of the report: \url{https://github.com/Benmartin92/research-kth}} (co-authored with Marine Collery and supervised by prof. Gerald Q. Maguire Jr. at KTH, Fall 2017).
+
 In Section \ref{sec:4-choosable}, an upper bound for the choice number of $1$-band buffering graphs is established proving that they are $4$-choosable. The computation of kernels in directed acyclic graphs is detailed. Finally, we close this part of the thesis by presenting a polynomial-time algorithm\---heavily based on Galvin's theorem\---that $4$-list colors $1$-band buffering cellular graphs.
 
 Section \ref{sec:k-band-case} extends the results of Section \ref{sec:4-choosable} by deriving the above mentioned upper bound and algorithm. Furthermore, an interesting application is indicated regarding the channel allocation in IEEE 802.11 systems.
 
 Our evaluation concerning the Szekeres\---Wilf number of cellular graphs are drawn in Section \ref{sec:eval}.
+
+\subsection{Problem statement}
+In the age of the Internet of Things, Wireless Local Area Networks (WLANs) have become an essential part of any household, institution and public space. Most of these wireless networks operate in the 2.4GHz (and 5GHz) band using the IEEE 802.11 medium access control (MAC) protocol mostly known under the trademark ''WiFi''. The IEEE 802.11 standard divides this 2.4GHz band into 13 channels (the exact number depends on the specific protocol version and local regulations) with only three non-overlapping channels.
+
+Transmitting simultaneously using overlapping channels might result in packet collisions (or in other words: interference) which can significantly degrade the throughput (due to the numerous packet retransmissions). Although the MAC sublayer has been designed to solve this task by regulating the wireless medium access while providing fairness and avoiding packet collisions (CSMA/CA), it has two major drawbacks: 
+\begin{itemize}
+\item It is unable to utilize the whole wireless spectrum (i.e. works in a single channel).
+\item In a densely deployed environment, the statistical (exponential backoff) and random methods (contention window technique) work less efficiently.
+\end{itemize} 
+Therefore, the efficient channel allocation in such systems is of great interest to provide best performance in crowded environments. In this thesis, we propose an algorithm that solves the channel allocation problem in IEEE 802.11 networks.
+
+
+\subsection{Literature review}
+Channel allocation problems in wireless networks have been addressed in graph theoretic frameworks by many authors. J. Riihijarvi, M. Petrova and P. Mahonen \cite{marina} defined the term interference graph $G$ where the vertices $V(G):=\lbrace v_1,v_2, \ldots, v_n \rbrace$ are the access points and two vertices $v_i$ and $v_j$ are connected, that is, $(v_i,v_j) \in E(G)$ if and only if their traffic would interfere if they were communicating on the same channel simultaneously. A channel allocation or coloring of this graph is a function $c\colon V(G) \to F$ where $F$ is the available channels (colors) to the access points. A channel allocation (coloring) is called admissible (or proper) if and only if $(v_i,v_j) \in E(G)$ implies $c(v_i) \neq c(v_j)$ for all $i,j \in \lbrace 1, 2, \ldots, |V(G)| \rbrace$. An admissible coloring that minimizes $|c(V)|$ is called optimal, the number of color needed by an optimal coloring is the chromatic number of $G$ denoted by $\chi(G)$. 
+
+They applied DSATUR algorithm proposed by Brélaz \cite{dsatur} to the problem that constructs an admissible coloring in polynomial time, however, DSATUR only approximates the optimal coloring. The main advantages of this algorithm are that it can be used in a distributed manner and is computationally cheap with a complexity of $O(|V(G)|^2)$. 
+
+In addition, they investigated the scenario when the interference graph is so dense that no admissible coloring exists using the non-overlapping channel set $F'$ from $F$ (i.e. $|F'| < \chi(G)$). In that case, they used the complete channel set $F$, however an additional requirement had been introduced for the coloring function $c_T$, namely
+$$
+c_T(u) - c_T(v) \not\in T
+$$
+if $u$ and $v$ are neighbors and $T \subset \mathbb{N}$, yielding the approach called $T$-coloring (originally introduced by W. K. Hale in \cite{1456167}). The set $T$ allows the network designer to impose separation constraints on the channel assignment and thereby reducing the amount of interference.
+
+Finally, they evaluated DSATUR algorithm against random channel allocation by measuring various network metrics such as throughput and number of packet collisions in a ns-2 simulation environment. The results showed that implementing graph coloring techniques provides real benefit compared to the uncoordinated, random channel allocation approach.
+
+A. Mishra, S. Banerjee and W. Arbaugh \cite{mishra} addressed the same problem that $T$-coloring has been designed for, namely due to the densely deployed access points, the number of non-overlapping channels are usually not enough to construct a proper (interference-free) channel allocation. They introduced the weighted variant of the graph coloring problem, extending the above mentioned interference graph with a function $w\colon E(G) \to \mathbb{R}^+$ which indicates the importance of using non-overlapping channels (colors) for a particular pair of access points (vertices) in the interference graph.
+
+This approach makes it possible to prioritize certain access points (by giving them higher weight) that need to serve more users or need to serve prioritized users. In order to construct an objective function using the edge weights, a special metric called $I$-factor (interference-factor) had been introduced that measures the amount of interference between two access points and therefore it is defined as a function $I\colon V(G) \times V(G) \to \mathbb{R}^+$. Naturally, if two different non-overlapping channels have been assigned to the access points $u$ and $v$ then $I(u,v)=0$ holds. The total interference is defined to be the product of the weight and the $I$-factor:
+$$
+\text{total interference}:=I(u,v) \cdot w(e): \quad e=(u,v) \in E(G),
+$$
+and therefore the following objective functions can be defined:
+\begin{gather}
+L(G,c) := \max_{\forall e = (u,v) \in E(G)}I(u,v) \cdot w(e), \\
+L(G,c) := \sum_{\forall e = (u,v) \in E(G)}I(u,v) \cdot w(e), \\
+L(G,c) := \sum_{\forall e = (u,v) \in E(G)}I(u,v).
+\end{gather}
+An optimal proper weighted coloring of an interference graph $G$ is a proper coloring $c$ of $G$ that minimizes the function $L(G,c)$ with a given weight $w$. One can easily read that:
+\begin{enumerate}[(1)]
+\item minimizes the maximum impact among all the access points, this can interpreted to be some kind of fairness among the access points,
+\item minimizes the total interference in the graph which can yield good average performance with some poorly performing access points,
+\item minimizes the impact of the overlapping channels. Note that a proper coloring $c$ that satisfies $L(G,c)=0$ is an interference-free channel allocation.
+\end{enumerate}
+Unfortunately, it has been proved that the weighted graph coloring problem is NP-hard and therefore we do not know if there exists a polynomial time algorithm that minimizes the above mentioned objective functions. However, the authors proposed two different distributed, heuristic strategies to minimize (1).
+
+\subsection{How do $k$-band buffering cellular graphs help in network design?}
+In spite of the fact that our upper bound is established for $k$-band buffering cellular graphs, it can help estimating the number of channels needed to create an interference-free channel allocation an in arbitrary wireless topology. 
+
+It is a trivial graph theoretic result that if $H$ is a subgraph of $G$ then $\chi(H) \leqslant \chi(G)$ and thus knowing a chromatic number of a graph helps estimating the chromatic number of the original graph. Since $k$-band buffering graphs model a structure that arises quite often in network topologies, we can estimate the chromatic number and the choice number in arbitrary topologies.
+
+However, we would like to highlight the fact that Algorithm \ref{alg:szekeres-list-coloring} can be used for an arbitrary topology.
+
+\subsection{Limitations of our approach}
+
+A major drawback of our algorithm could be that it might not be used in a distributed manner. Algorithms that are not distributed require some kind of wireless controller that would result in higher implementation cost and exclude commercial-grade access points from the application. However, in this thesis, we do not investigate whether the proposed algorithm can be implemented in a distributed manner.
 
 \newpage
 \section{List coloring of $1$-band buffering cellular graphs} \label{ch:list-coloring}
@@ -177,7 +235,9 @@ In this section, we introduce the basic notions and definitions that are essenti
 \end{defin}
 \begin{defin} Let $G$ be a graph and $L(v)$ a set of colors for all $v \in V(G)$ such that $|L(v)|=k$. We say that $G$ is $k$\textit{-choosable} if $G$ is colorable such that the color of $v$ is in $L(v)$ for all $v \in V(G)$, such colorings called $k$\textit{-list coloring} of $G$.
 \end{defin}
-\begin{defin} The \textit{choice number} of $G$ is the smallest $k \in \mathbb{N}$ (notated by $\ch(G)$) such that $G$ is $k$-choosable.
+\begin{defin} The \textit{choice number} of $G$ is the smallest $k \in \mathbb{N}$ (denoted by $\ch(G)$) such that $G$ is $k$-choosable.
+\end{defin}
+\begin{defin} Let $G$ be any graph. The smallest and the maximum degree of $G$ are denoted by $\delta(G)$ and $\Delta(G)$, respectively.
 \end{defin}
 It is worth pointing out that proving a graph to be $k$-choosable is more difficult than showing that it is $k$-colorable. This simply follows from the fact that the lists $L(v):=\lbrace 1,2,3,\ldots,k\rbrace$ for all $v \in V(G)$ bring us back to the original $k$-coloring problem. This observation yields our first bound, that is, $\chi(G) \leqslant \ch(G)$ for any graph $G$. Therefore, it is not surprising that there exists a non $2$-choosable but $2$-colorable graph.
 \begin{example}[A non $2$-choosable graph $G$ with $\chi(G)=2$]\label{ex:2-colorable-ch3}
@@ -192,18 +252,18 @@ Selecting either color $1$ or color $3$ in the upper-left corner leads to a conf
 \begin{theo}\label{theo:logarithm-bound}
 Let $G$ be any graph with $n$ nodes. Then $\ch(G) \leqslant \chi(G) \ln{n}$.
 \end{theo}
-\begin{proof} To prove the inequality, we use a probabilistic argument. Assume that $G$ is colored with $s := \chi(G)$ colors, that is, the nodes $V(G)$ are divided into the color classes $C_1, C_2, \ldots, C_s$. Suppose that $G$ has a $k$-list assignment $L$ where $k = \chi(G) \ln{n}$ and $n := |V(G)|.$ Consider the probability space of the $s$-partitions $\pi \colon \pi_{1},\pi_{2},\ldots,\pi_{s}$ of $\bigcup_{v \in V(G)} L(v).$ If we can assign for all $i \in \lbrace 1,2,3,\dots,s \rbrace$ a partition $\pi_i$ to the color class $C_i$ such that for all $v \in C_i$ we have $L(v) \cap P_i \neq \varnothing$, then $G$ can be colored from the lists $L$. 
+\begin{proof} To prove the inequality, we use a probabilistic argument. Assume that $G$ is colored with $s := \chi(G)$ colors, that is, the nodes $V(G)$ are divided into the color classes $C_1, C_2, \ldots, C_s$. Suppose that $G$ has a $k$-list assignment $L$ where $k = \chi(G) \ln{n}$ and $n := |V(G)|.$ Consider the probability space of the $s$-partitions $\pi \colon \pi_{1},\pi_{2},\ldots,\pi_{s}$ of $\bigcup_{v \in V(G)} L(v).$ If we can assign for all $i \in \lbrace 1,2,3,\dots,s \rbrace$ a partition $\pi_i$ to the color class $C_i$ such that for all $v \in C_i$ we have $L(v) \cap \pi_i \neq \varnothing$, then $G$ can be colored from the lists $L$. 
 
 It remains to prove that such a partition $\pi$ exists with nonzero probability and thus the assertion follows. Let us first calculate the probability of the complementary event:
 \begin{equation*}
 \begin{split}
-\mathbb{P}(\exists i \in \lbrace 1,2,\ldots, s \rbrace, \exists v \in C_i, L(v) \cap P_i = \varnothing) = \\
+\mathbb{P}(\exists i \in \lbrace 1,2,\ldots, s \rbrace, \exists v \in C_i, L(v) \cap \pi_i = \varnothing) = \\
 \sum_{v \in V(G)}\left( 1 - \frac{1}{s} \right)^k = n \left(\left(1 - \frac{1}{s} \right)^s \right)^{\frac{k}{s}} < n\mathrm{e}^{-\frac{k}{s}}.
 \end{split}
 \end{equation*}
-The term $\left( 1 - \frac{1}{s} \right)$ is the probability of $c \in L(v)$ not being in $P_i.$ Since there are $k$ colors in each list and we consider every node, the summation is valid. From the equation $k = s \ln{n}$, it follows that $n = \mathrm{e}^{k/s}$ and therefore $n\mathrm{e}^{-k/s} = 1.$ Since the complementary event is not a sure event, it follows that
+The term $\left( 1 - \frac{1}{s} \right)$ is the probability of $c \in L(v)$ not being in $\pi_i.$ Since there are $k$ colors in each list and we consider every node, the summation is valid. From the equation $k = s \ln{n}$, it follows that $n = \mathrm{e}^{k/s}$ and therefore $n\mathrm{e}^{-k/s} = 1.$ Since the complementary event is not a sure event, it follows that
 $$
-\mathbb{P}(\forall i \in \lbrace 1,2,\ldots, s \rbrace, \forall v \in C_i, L(v) \cap P_i \neq \varnothing) > 0
+\mathbb{P}(\forall i \in \lbrace 1,2,\ldots, s \rbrace, \forall v \in C_i, L(v) \cap \pi_i \neq \varnothing) > 0
 $$
 which completes the proof.
 \end{proof}
@@ -235,7 +295,7 @@ We say that the orientation of a digraph $G$ is $k$\textit{-bounded} if for each
 \begin{lem}\label{lem:bounded-acyclic-orientation}
 If $G$ is a cellular graph, then $G$ has a $3$-bounded acyclic orientation.
 \end{lem}
-\begin{proof} Since $G=(V,E)$ is a cellular graph, we can make use of Lemma \ref{lem:degree-constraint}, that is, let $v$ be a node of $G^{(0)}:=G$ with $\deg(v) \leqslant 3$. We construct a function $f\colon V(G) \to \mathbb{N}$ by setting $f(v) := 0$ and then remove the node $v$ from $G^{(0)}$ yielding the graph $G^{(1)}$. By repeating the same procedure\---at step $i$th\---we select a node $v$ in $G^{(i)}$ such that $\deg(v) \leqslant 3$ and we set $f(v):=i$. Then we remove $v$ from $G^{(i)}$ which yields the graph $V(G^{(i+1)}) := V(G^{(i)}) \setminus \lbrace v \rbrace$. It is trivial that the graphs $G^{(1)},\ldots,G^{(|V(G)|)}$ are all cellular therefore it was valid using Lemma \ref{lem:degree-constraint}.
+\begin{proof} Since $G=(V,E)$ is a cellular graph, we can make use of Lemma \ref{lem:degree-constraint}, that is, let $v$ be a node of $G^{(0)}:=G$ with $\deg(v) \leqslant 3$. We construct a function $f\colon V(G) \to \mathbb{N}$ by setting $f(v) := 0$ and then remove the node $v$ from $G^{(0)}$ yielding the graph $G^{(1)}$. By repeating the same procedure\---at step $i$\---we select a node $v$ in $G^{(i)}$ such that $\deg(v) \leqslant 3$ and we set $f(v):=i$. Then we remove $v$ from $G^{(i)}$ which yields the graph $V(G^{(i+1)})$ spanned by $V(G^{(i)}) \setminus \lbrace v \rbrace$. It is trivial that the graphs $G^{(1)},\ldots,G^{(|V(G)|)}$ are all cellular therefore it was valid using Lemma \ref{lem:degree-constraint}.
 
 We note that the procedure ends after $|V(G)|$ steps.
 
@@ -246,7 +306,7 @@ Now we construct a digraph $H=(V,A)$ from $G$ using the function $f$. Let $(u,v)
 \end{enumerate}
 To prove (1), we will obtain a contradiction by assuming that $H$ contains a directed cycle. Let $C$ be a directed cycle in $H$ with the nodes $C:=\lbrace v_1,v_2,\ldots,v_k \rbrace$ that are ordered such that $(v_i,v_{i+1 \bmod{k}}) \in E$ $(i=1,2,\ldots,k)$ which means that $f(v_1) < f(v_2) < \ldots < f(v_{k-1}) < f(v_k)$ but also $f(v_k) < f(v_1)$ which is impossible.
 
-What is left to show is that $\deg^+(v) \leqslant 3$. At each step we select a node with no more than $3$ neighbors and those neighbors will be assigned a number that is greater than $f(v)$. Therefore the outdegree of $v$ cannot be larger than $3$.
+What is left to show is that $\deg^+(v) \leqslant 3$. At each step we select a node with no more than $3$ remaining neighbors and those neighbors will be assigned a number that is greater than $f(v)$. Therefore the outdegree of $v$ cannot be larger than $3$.
 \end{proof}
 
 It is easy to see that the proof of this lemma can be transformed into a polynomial time algorithm. We outline the algorithm (Algorithm \ref{alg:find-acyclic-bounded-orientation}) that is based on the proof of Lemma \ref{lem:bounded-acyclic-orientation} and then we prove that its running time is $O(|V(G)| + |E(G)|)$.
@@ -282,9 +342,9 @@ It is enough to prove that "Select $v \in V(G^i)$ such that $\deg(v) \leqslant 3
 \begin{defin} We say that the Szekeres\---Wilf number of a graph $G$ is $k$ if every subgraph of $G$ contains a node of degree at most $k$. The term $k$-degeneracy is also used in some literature.
 \end{defin}
 
-Immediately follows that if we omit the cellular graph assumption\---having known that the Szekeres\---Wilf number of graph is $k$\---then the arguments of the proof of Lemma \ref{lem:bounded-acyclic-orientation} can be repeated and thus the following lemma holds.
+It immediately follows that if we omit the cellular graph assumption\---having known that the Szekeres\---Wilf number of graph is $k$\---then the arguments of the proof of Lemma \ref{lem:bounded-acyclic-orientation} can be repeated and thus the following lemma holds.
 
-\begin{lem}\label{lem:szekeres} Let $G$ be any graph such that its Szekeres\---Wilf number is $k$. Then $G$ has a $k$-bounded acyclic orientation. \qed
+\begin{lem}\label{lem:szekeres} Let $G$ be any graph with Szekeres\---Wilf number of $k$. Then $G$ has a $k$-bounded acyclic orientation. \qed
 \end{lem}
 
 Another interesting question is how to compute the Szekeres\---Wilf number of a graph. The following algorithm \cite{Matula:1983:SOC:2402.322385} computes this number in linear time by repeatedly removing the minimum-degree nodes.
@@ -375,12 +435,12 @@ Finally, it is worth mentioning that Von Neumann and Morgenstern \cite{neumann} 
 \subsection{$4$-list coloring of cellular graphs}\label{sec:4-list-coloring}
 Now we have everything necessary to prove our main result and give a polynomial algorithm that computes a $4$-list coloring of a cellular graph. 
 
-First, we reformulate Galvin's theorem for cellular graphs and prove it (Theorem \ref{thm:galvin}), the proof is based on \cite{citeulike:395714} (Lemma 5.4.3). The original proof uses mathematical induction, we just repeat the same argument, fortunately, the inductive step describes how to color the nodes, that is, the proof can be transformed into an algorithm. The cellular version, however, uses our result, namely Lemma \ref{lem:bounded-acyclic-orientation}. In addition, it also uses Lemma \ref{lem:kernel-lemma}. Then we prove that its (Algorithm \ref{alg:four-list-coloring}) running time is polynomial. Algorithm \ref{alg:four-list-coloring} uses Algorithm \ref{alg:find-acyclic-bounded-orientation} and Algorithm \ref{alg:find-kernel-in-dags}. The fact that Algorithm \ref{alg:four-list-coloring} is polynomial follows from the fact that Algorithm \ref{alg:find-acyclic-bounded-orientation} and Algorithm \ref{alg:find-kernel-in-dags} are polynomial.
-\begin{theo}[Galvin's theorem for cellular graphs] Let $G$ be a graph and $\lbrace L(v) \mid v \in V(G) \rbrace$ given color sets. If $G$ has a kernel-perfect orientation $D$ such that $d^+(v) < |L(v)|$ for all $v \in V(D)$, then $G$ can be colored from the given color sets.
+First, we reformulate Galvin's theorem for cellular graphs and prove it (Theorem \ref{thm:galvin-cellular}), the proof is based on \cite{citeulike:395714} (Lemma 5.4.3). The original proof uses mathematical induction, we just repeat the same argument, fortunately, the inductive step describes how to color the nodes, that is, the proof can be transformed into an algorithm. The cellular version, however, uses our result, namely Lemma \ref{lem:bounded-acyclic-orientation}. In addition, it also uses Lemma \ref{lem:kernel-lemma}. Then we prove that its (Algorithm \ref{alg:four-list-coloring}) running time is polynomial. Algorithm \ref{alg:four-list-coloring} uses Algorithm \ref{alg:find-acyclic-bounded-orientation} and Algorithm \ref{alg:find-kernel-in-dags}. The fact that Algorithm \ref{alg:four-list-coloring} is polynomial follows from the fact that Algorithm \ref{alg:find-acyclic-bounded-orientation} and Algorithm \ref{alg:find-kernel-in-dags} are polynomial.
+\begin{theo}[Galvin's theorem for cellular graphs]\label{thm:galvin-cellular} Let $G$ be a graph and $\lbrace L(v) \mid v \in V(G) \rbrace$ given color sets. If $G$ has a kernel-perfect orientation $D$ such that $d^+(v) < |L(v)|$ for all $v \in V(D)$. Then $G$ can be colored from the given color sets.
 In particular, if $G$ is a cellular graph and $|L(v)| \geqslant 4$ for all $v \in V(G)$. Then $G$ can be colored from the given color sets.
 \end{theo}
 \begin{proof}
-Let $G^*$ be the $3$-bounded acyclic orientation of $G$ (Lemma \ref{lem:bounded-acyclic-orientation}), that is, $d^+(v) \leqslant 3$. We apply induction on $|V(G^*)|$. For $|V(G^*)|=0$, the empty coloring is good. Let us assume that we know how to color $G^*$ with $|V(G^*)| < n$ and consider the case when $|V(G^*)|=n$. Let $\alpha$ be any color from one of the colors sets and set $V_\alpha$ to $\lbrace v \in V(G) \mid \alpha \in L(v) \rbrace$. Consider the non-empty subgraph $D$ of $G^*$ that is spanned by $V_\alpha$. Since $G^*$ is a DAG, it is kernel-perfect (Lemma \ref{lem:kernel-lemma}), therefore $D$ has a kernel $U \neq \emptyset$. Assign the color $\alpha$ to every node in $U$ and remove $\alpha$ from $L(v)$ for all $v \in V_\alpha$. Since $U$ is independent, and we removed $\alpha$, it follows that we did not (and we will not) violate the rules of the graph coloring. After that, remove $U$ from $D$, since every node in $V(D) \setminus U$ sends an edge to $U$, having removed $U$ from $D$, we decreased the outdegree of each node in $D$ by $1$. Since the modified lists $L'(v)$ $(v \in V_\alpha)$ satisfy $d^+(v) < |L'(v)|$ for all $v \in V(D) \setminus U$, we can use our induction hypothesis to color $V(G^*) \setminus U$.
+Let $G^*$ be the $3$-bounded acyclic orientation of $G$ (Lemma \ref{lem:bounded-acyclic-orientation}), that is, $d^+(v) \leqslant 3$. We apply induction on $|V(G^*)|$. For $|V(G^*)|=0$, the empty coloring is good. Let us assume that we know how to color $G^*$ with $|V(G^*)| < n$ and consider the case when $|V(G^*)|=n$. Let $\alpha$ be any color from one of the color sets and set $V_\alpha$ to $\lbrace v \in V(G) \mid \alpha \in L(v) \rbrace$. Consider the non-empty subgraph $D$ of $G^*$ that is spanned by $V_\alpha$. Since $G^*$ is a DAG, it is kernel-perfect (Lemma \ref{lem:kernel-lemma}), therefore $D$ has a kernel $U \neq \emptyset$. Assign the color $\alpha$ to every node in $U$ and remove $\alpha$ from $L(v)$ for all $v \in V_\alpha$. Since $U$ is independent, and we removed $\alpha$, it follows that we did not (and we will not) violate the rules of the graph coloring. After that, remove $U$ from $D$. Since every node in $V(D) \setminus U$ sends an edge to $U$, having removed $U$ from $D$, we decreased the outdegree of each node in $D$ by $1$. Since the modified lists $L'(v)$ $(v \in V_\alpha)$ satisfy $d^+(v) < |L'(v)|$ for all $v \in V(D) \setminus U$, we can use our induction hypothesis to color $V(G^*) \setminus U$.
 \end{proof}
 \begin{algorithm}[h!]\label{alg:four-list-coloring}
  \KwData{A cellular graph $G$ and a set of colors $L(v)$ for all $v \in V(G)$ with $|L(v)| \geqslant 4$}
@@ -398,12 +458,12 @@ Let $G^*$ be the $3$-bounded acyclic orientation of $G$ (Lemma \ref{lem:bounded-
  \caption{$4$-list coloring of a cellular graph}
 \end{algorithm}
 
-It can be seen from the algorithm that first we call Algorithm \ref{alg:find-acyclic-bounded-orientation} then we call Algorithm \ref{alg:find-kernel-in-dags} multiple times. If we assume the worst-case scenario when the kernel $U$ has only $1$ element, then the while loop iterates $|V(G)|$ times. The auxiliary operations such as spanning a subgraph or creating the set $V_\alpha$ can be done in linear time. Therefore the overall running time of our algorithm is $O(|V(G)|^2+|V(G)||E(G)|)$.
+It can be seen from the algorithm that first we call Algorithm \ref{alg:find-acyclic-bounded-orientation}, then we call Algorithm \ref{alg:find-kernel-in-dags} multiple times. If we assume the worst-case scenario when the kernel $U$ has only $1$ element, then the while loop iterates $|V(G)|$ times. The auxiliary operations such as spanning a subgraph or creating the set $V_\alpha$ can be done in linear time. Therefore the overall running time of our algorithm is $O(|V(G)|^2+|V(G)||E(G)|)$.
 
 In each iteration, we color the nodes in $U$ and remove one color. The color is proper by Theorem \ref{alg:four-list-coloring}. However, we need to show that in each iteration every node is either colored or it has a free available color.
 \begin{lem} Algorithm \ref{alg:four-list-coloring} is correct, that is, in each iteration every node is either colored or it has a free available color.
 \end{lem}
-\begin{proof} To obtain a contradiction, let us suppose that there is a node $v$ that is not colored and it does not have an available color ($|L(v)|=0$). This means that $v$ was in $V_{\alpha}$ for at least $4$ different colors and it was never in the kernel. However, this would mean that $d^+(v) \geqslant 4$ as $v$ sent an edge to each kernel. This is impossible since $G$ is $3$-bounded.
+\begin{proof} To obtain a contradiction, let us suppose that there is a node $v$ that is not colored and it does not have an available color ($|L(v)|=0$). This means that $v$ was in $V_{\alpha}$ for at least $4$ different colors and it was never in the kernel. However, this would mean that $d^+(v) \geqslant 4$ as $v$ sent an edge to each kernel. This is impossible since $G^*$ is $3$-bounded.
 \end{proof}
 
 \paragraph*{References} Galvin's theorem with proof can be found in \cite{citeulike:395714} \textit{Lemma 5.4.3}.
@@ -412,7 +472,7 @@ In each iteration, we color the nodes in $U$ and remove one color. The color is 
 In this section, we generalize the current results for $k > 1$. In addition, we introduce a possible application of the presented algorithms.
 
 \subsection{$k$-band buffering cellular graphs are $(3(k+1)k/2+1)$-choosable}
-From Galvin's theorem and Lemma \ref{lem:szekeres}, it immediately follows the following theorem.
+Galvin's theorem and Lemma \ref{lem:szekeres} can be summarized as follows.
 \begin{theo} Let $G$ be any graph. If $G$ has a Szekeres\---Wilf number of $k$ then $G$ is $(k+1)$-choosable. In other words, if $G$ has a $k$-bounded acyclic orientation then it is $(k+1)$-choosable.
 \end{theo}
 
@@ -429,7 +489,7 @@ Even though Algorithm \ref{alg:four-list-coloring} is designed for $1$-band buff
 \end{figure}
 where $d_{G}(u,v)$ is the distance between $u$ and $v$ in $G$, that is, the length of the shortest path that connects $u$ and $v$. It is trivial that running Algorithm \ref{alg:four-list-coloring} for $G^k$ is equivalent to running a $k$-band buffering list-coloring algorithm  for $G$.
 
-\begin{defin} The construction in Equation \ref{eq:graph-mod} is called graph powering and it is notated by $G^k$. 
+\begin{defin} The construction in Equation \ref{eq:graph-mod} is called graph powering and it is denoted by $G^k$. 
 \end{defin}
 
 The $k$th graph power of a graph $G$ can be calculated from the adjacency $\adj(G)$ matrix of $G$ in the following way \cite{power}:
@@ -440,7 +500,7 @@ $$
 \end{note}
 Obviously, we also need to modify Algorithm \ref{alg:find-acyclic-bounded-orientation} as we do not know the Szekeres\---Wilf number of $G^k$. Algorithm \ref{alg:find-acyclic-bounded-orientation-general} simply modifies Algorithm \ref{alg:find-acyclic-bounded-orientation} by selecting a node with $\deg(v) = \delta(G^i)$ in each iteration $i$ which is the same step that Algorithm \ref{alg:szekeres-wilf-computation} carries out to compute the Szekeres\---Wilf number. Therefore the following theorem holds:
 
-\begin{theo} Algorithm \ref{alg:find-acyclic-bounded-orientation-general} computes an $k$-bounded acyclic orientation of an arbitrary graph $G$ where $k$ is the Szekeres\---Wilf number of $G$.
+\begin{theo} Algorithm \ref{alg:find-acyclic-bounded-orientation-general} computes a $k$-bounded acyclic orientation of an arbitrary graph $G$ where $k$ is the Szekeres\---Wilf number of $G$.
 \end{theo}
 
 \begin{proof} Immediately follows from Algorithm \ref{alg:find-acyclic-bounded-orientation} and \ref{alg:szekeres-wilf-computation}.
@@ -482,11 +542,11 @@ as required.
 \caption{This figure visualizes that above the white diagonal we either increase coordinate $x$ or $y$ of the red hexagon.}\label{fig:extremal-proof}
 \end{figure}
 \end{proof}
-\begin{corollary}\label{cor:main-result} Let $G^k$ be a $k$-band buffering cellular graph then $G^k$ is $(3(k+1)k/2+1)$-choosable.
+\begin{corollary}\label{cor:main-result} Let $G^k$ be a $k$-band buffering cellular graph. Then $G^k$ is $(3(k+1)k/2+1)$-choosable.
 \end{corollary}
 It is worth mentioning that for $k=2$ we proved that a $2$-band buffering cellular graph is $10$-choosable which coincides with the result of \cite{7248845}. 
 
-Now, we have everything to modify Algorithm \ref{alg:four-list-coloring} such that it can handle arbitrary graphs and thus $k$-band buffering graphs. Algorithm \ref{alg:szekeres-list-coloring} would accepts list of size $3k(k+1)/2+1$, however it is possible to run Algorithm \ref{alg:szekeres-wilf-computation} to precompute the Szekeres\---Wilf number of the current $k$-band buffering graph thereby decreasing the initial list sizes.
+Now, we have everything to modify Algorithm \ref{alg:four-list-coloring} such that it can handle arbitrary graphs and thus $k$-band buffering graphs. Algorithm \ref{alg:szekeres-list-coloring} would accept list of size $3k(k+1)/2+1$, however it is possible to run Algorithm \ref{alg:szekeres-wilf-computation} to precompute the Szekeres\---Wilf number of the current $k$-band buffering graph thereby decreasing the initial list sizes.
 
 \begin{algorithm}[h!]\label{alg:szekeres-list-coloring}
  \KwData{A graph $G$ and a set of colors $L(v)$ for all $v \in V(G)$ with $|L(v)| \geqslant k+1$ where $k$ is the Szekeres\---Wilf number of $G$}
@@ -522,9 +582,9 @@ The general problem with such methods that they try (the whole method is not des
 
 However, this CM can be used to identify the free channels (e.g. if they are below some constant) $L(v)$ at each access point $v$. A controller\---which knows the topology of the access points\---whould be able to run Algorithm \ref{alg:szekeres-list-coloring}. In addition, using the concept of graph powering we would be able to require $k$-band buffering interference-free allocations if there are enough channels (i.e. more than the Szekeres\---Wilf number of the access point topology graph).
 \section{Evaluation}\label{sec:eval}
-The aim of this evaluation is to compare our upper bound established in Theorem \ref{theo:extremal-degree} with the Szekeres\---Wilf number of $k$-band buffering cellular graphs. The reason we are interested in the relationship of these two numbers is due to the fact the a graph has Szekeres\---Wilf number of $k$ if and only if it has a $k$-bounded acyclic orientation. One direction has already been proven in Lemma \ref{alg:find-acyclic-bounded-orientation}. Now, assume that $G$ has $k$-bounded acyclic orientation, we need to prove that if $H$ is a nonempty subgraph of $G$ then $H$ has a node $v$ with $\deg_H(v) \leqslant k$. Since $G$ is a DAG, it has at least one node $v$ with $\deg_{H}^-(v)=0$, however $\deg_{H}^+(v) \leqslant k$ and therefore $\deg_H(v) = \deg_{H}^+(v) + \deg_{H}^-(v) \leqslant k$. This means the we cannot improve Algorithm \ref{alg:szekeres-list-coloring} by constructing better acyclic orientations.
+The aim of this evaluation is to compare our upper bound established in Theorem \ref{theo:extremal-degree} with the Szekeres\---Wilf number of $k$-band buffering cellular graphs. The reason we are interested in the relationship of these two numbers is due to the fact the a graph has Szekeres\---Wilf number of $k$ if and only if it has a $k$-bounded acyclic orientation. One direction has already been proven in Lemma \ref{lem:bounded-acyclic-orientation}. Now, assume that $G$ has $k$-bounded acyclic orientation, we need to prove that if $H$ is a nonempty subgraph of $G$ then $H$ has a node $v$ with $\deg_H(v) \leqslant k$. Since $G$ is a DAG, it has at least one node $v$ with $\deg_{H}^-(v)=0$, however $\deg_{H}^+(v) \leqslant k$ and therefore $\deg_H(v) = \deg_{H}^+(v) + \deg_{H}^-(v) \leqslant k$. This means the we cannot improve Algorithm \ref{alg:szekeres-list-coloring} by constructing better acyclic orientations.
 
-Another benefit of this equivalence is that it is enough to find one graph where our upper bound equals the Szekeres\---Wilf number and it immediately follows that bound is sharp.
+Another benefit of this equivalence is that it is enough to find one graph where our upper bound equals the Szekeres\---Wilf number and it immediately follows that the bound is sharp.
 \begin{table}[h!]
 \centering
 \begin{tabular}{|c|c|c|}
@@ -542,6 +602,16 @@ Another benefit of this equivalence is that it is enough to find one graph where
 
 Table \ref{eval-szekeres} shows that the bound is sharp for $k=1,2,3,4$ and for $5$ they are very close. This result somehow suggest that they might be equal for $k > 4$ using a different generated graph. This would mean that the best attainable list-coloring with Galvin's approach requires at least $3k(k+1)/2+1$ list size.
 \paragraph*{References.} The graph generator source code is available at \url{https://github.com/Benmartin92/thesis-kth} (CellularGraphGenerator.java)).
+\section{Summary and Conclusion}
+The aim of this thesis was to bring together two areas, namely graph theory and telecommunication engineering. We showed that certain cellular topologies arising in telecommunication network design can be modeled using a special graph called $k$-band buffering cellular graph.
+
+A special frequency allocation scheme used in IEEE 802.11 systems was investigated in a graph theoretic setting by showing that it is equivalent to the list-coloring problem in cellular graphs.
+
+An upper bound for the choice number of cellular graphs\---which relates to the number of free channels necessary to establish an interference-free channel allocation in IEEE 802.11 systems\---was established. We proved that the choice number of a $k$-band buffering cellular graph $G$ is at most $\frac{3k(k+1)}{2}+1$ generalizing the $2$-band buffering case of R. Wang, et al. \cite{7248845} which was the main inspiration of this thesis.
+
+In addition, computer simulations were run to calculate the Szekeres\---Wilf number in large cellular graphs showing that our bound is sharp for $k=1,2,3$ and $4$. 
+
+Our conjecture is that this bound is sharp for $k > 0$ and it might be proved by constructing an appropriate $k$-band buffering cellular graph.
 \newpage
 \printbibliography
 \addcontentsline{toc}{section}{References}
