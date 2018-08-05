@@ -366,17 +366,29 @@ The linear time is obvious as we iterate through the nodes of $G$. The efficient
 \end{proof}
 
 \subsection{Defective coloring}\label{sec:defective}
-In some cases, it is impossible to assign the channels such that the allocation yields an interference-free system. 
+Due to the robust design of wireless communication systems, it is not always necessary (and in fact possible) to achieve interference-free channel allocation. Wireless systems employs error detecting and correcting techniques (such as Forward Error Correction (FEC) in IEEE 802.11 systems \cite{ieee80211}) codes to be able to tolerate interference to a certain extent. However, error correcting codes introduce redundancy in data transmissions and thus reduce the net transmission bit rate (or information rate).
+
+
 \begin{defin} We say that a graph $G$ is $(k,d)$-colorable if the graph can be colored with $k$ colors such that every color class induces a graph with maximum degree at most $d$.
 \end{defin}
 
 Such colorings are known as \textit{defective} or \textit{improper} coloring since the definition allows the nodes to have at most $d$ neighbors from the same color class.
 A classical result from Lovász shows that an arbitrary graph can be colored with $k$ colors in polynomial time with at most $[\Delta(G)/k]$ ''errors''.
 \begin{theo}[Lovász]\label{theo:lovasz-defective}
-Let $G$ be any graph and $k > 0$ then $G=(V,E)$ is $(k,[\Delta(G)/k])$-colorable in $O(|E|)$ steps.
+Let $G$ be any graph and $k > 0$ then it is $(k,[\Delta(G)/k])$-colorable in $O(|E|)$ steps.
 \end{theo}
 \begin{proof} Let us consider an arbitrary (not necessarily proper) $k$-coloring of $G$. If this coloring is a $(k,[\Delta(G)/k])$-coloring then we are done otherwise choose a node $v$ that has more than $[\Delta(G)/k]$ neighbors from the same color class. It is obvious that there exists a color class $c$ with at most $[\Delta(G)/k]$ nodes in the neighbor set of $v$. By changing the color class of $v$ to color class $c$, we decrease the monochromatic edges in the coloring by at least one. Therefore we reach a $(k,[\Delta(G)/k])$-coloring in at most $|E|$ steps.
 \end{proof}
+
+Observe that the argument of Theorem \ref{theo:lovasz-defective} can be repeated in a list coloring fashion since it is true that there exists a color class $c \in L(v)$ with at most $[\Delta(G)/k]$ nodes in the neighbor set of $v$ for any $k$-list coloring. Therefore, the following theorem holds.
+
+\begin{theo}[Lovász theorem for list coloring]Let $G$ be any graph and $k > 0$ then it is $(k,[\Delta(G)/k])$-list colorable in $O(|E|)$ steps. $\blacksquare$
+\end{theo}
+
+\begin{corollary}\label{cor:lovasz} Let $G$ be any graph then it is $(\Delta(G)/2 + 1,1)$-list colorable in $O(|E|)$ steps. $\blacksquare$
+\end{corollary}
+
+We will see that Corollary \ref{cor:lovasz} gives us a bit weaker result than the goal of this thesis (Corollary \ref{cor:main-result}), however in a much simpler and faster way.
 
 \paragraph*{References} Example \ref{ex:2-colorable-ch3} is from \cite{erdos-choosability} \textit{Example scheme showing how choice $\ch(G)$ exceeds $\chi(G)$}. The proof of Theorem \ref{theo:logarithm-bound} can be found at \url{http://www.math.uri.edu/~eaton/TalkUriOct03P2.pdf} (accessed on the 9th March 2018). The idea of Algorithm \ref{alg:find-acyclic-bounded-orientation} came from \cite{CHROBAK1991243} \textit{Theorem 2.1} where the authors proved that every planar graph has a $5$-bounded acyclic orientation. They used the fact that every planar graph has a node with at most $5$ neighbors which follows from Euler's formula. Theorem \ref{theo:lovasz-defective} is from \cite{Cowen:1997:CD:314161.314387} \textit{Theorem 1.1} and the proof of Algorithm \ref{alg:szekeres-wilf-computation} can be found in \cite{Matula:1983:SOC:2402.322385} \textit{2. Smallest-Last Vertex Ordering}.
 
@@ -500,6 +512,13 @@ $$
 \end{note}
 Obviously, we also need to modify Algorithm \ref{alg:find-acyclic-bounded-orientation} as we do not know the Szekeres\---Wilf number of $G^k$. Algorithm \ref{alg:find-acyclic-bounded-orientation-general} simply modifies Algorithm \ref{alg:find-acyclic-bounded-orientation} by selecting a node with $\deg(v) = \delta(G^i)$ in each iteration $i$ which is the same step that Algorithm \ref{alg:szekeres-wilf-computation} carries out to compute the Szekeres\---Wilf number. Therefore the following theorem holds:
 
+\begin{figure}[!h]
+\centering
+\includegraphics[scale=1]{figures/proof-k-band-buffering.pdf}
+\caption{This figure visualizes that above the white diagonal we either increase coordinate $x$ or $y$ of the red hexagon.}\label{fig:extremal-proof}
+\end{figure}
+
+
 \begin{theo} Algorithm \ref{alg:find-acyclic-bounded-orientation-general} computes a $k$-bounded acyclic orientation of an arbitrary graph $G$ where $k$ is the Szekeres\---Wilf number of $G$.
 \end{theo}
 
@@ -536,16 +555,15 @@ $$6+12+\ldots+6k=\frac{(6 + 6k)k}{2} = 3k(k+1).$$
 Let us select the same extremal point that we have selected in Lemma \ref{lem:degree-constraint}, that is, a node $v$ with maximal $x$- and $y$-coordinate. Figure \ref{fig:extremal-proof} and our hexagonal coordinate system (see Figure \ref{fig:assignment}) show that by moving either north, northeast or southeast, we increase either coordinate $x$ or $y$ that would violate the maximality of $v$. Since this region includes exactly the half of the possible at most $k$-distance neighbors of $v$, we can deduce that
 $$\deg_{G^k}(v) \leqslant \frac{3(k+1)k}{2}$$ 
 as required.
-\begin{figure}[!h]
-\centering
-\includegraphics[scale=1]{figures/proof-k-band-buffering.pdf}
-\caption{This figure visualizes that above the white diagonal we either increase coordinate $x$ or $y$ of the red hexagon.}\label{fig:extremal-proof}
-\end{figure}
 \end{proof}
 \begin{corollary}\label{cor:main-result} Let $G^k$ be a $k$-band buffering cellular graph. Then $G^k$ is $(3(k+1)k/2+1)$-choosable.
 \end{corollary}
 It is worth mentioning that for $k=2$ we proved that a $2$-band buffering cellular graph is $10$-choosable which coincides with the result of \cite{7248845}. 
 
+\begin{corollary}\label{cor:defective-main-result} Let $G^k$ be a $k$-band buffering cellular graph. Then $G^k$ is $(3(k+1)k/2+1, 1)$-list colorable in $O(|E|)$ steps.
+\end{corollary}
+\begin{proof} From Theorem \ref{theo:extremal-degree}, it can be seen that $\Delta(G^k) = 3k(k+1)$. The rest follows from Corollary \ref{cor:lovasz}.
+\end{proof}
 Now, we have everything to modify Algorithm \ref{alg:four-list-coloring} such that it can handle arbitrary graphs and thus $k$-band buffering graphs. Algorithm \ref{alg:szekeres-list-coloring} would accept list of size $3k(k+1)/2+1$, however it is possible to run Algorithm \ref{alg:szekeres-wilf-computation} to precompute the Szekeres\---Wilf number of the current $k$-band buffering graph thereby decreasing the initial list sizes.
 
 \begin{algorithm}[h!]\label{alg:szekeres-list-coloring}
