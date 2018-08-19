@@ -146,7 +146,7 @@ In this thesis, we extended this result by establishing a general upper bound fo
 
 In addition, we have designed an algorithm (Algorithm \ref{alg:szekeres-list-coloring}) that $l$-list colors an arbitrary graph in polynomial time where $l$ is the Szekeres\---Wilf number of the graph. Since it is generally true that 
 $$\chi(G) \leqslant \ch(G) \leqslant l \leqslant \frac{3k(k+1)}{2}+1$$
-if $G$ is a $k$-band buffering cellular graph, Algorithm \ref{alg:szekeres-list-coloring} requires less free channels than the established upper bound.
+if $G$ is a $k$-band buffering cellular graph, Algorithm \ref{alg:szekeres-list-coloring} requires at most as many free channels as the established upper bound.
 
 Finally, in order to get a better picture of the relationship between the Szekeres\---Wilf number of $G$ and our upper bound, computer evaluations were run to calculate the Szekeres\---Wilf number in randomly generated cellular graphs.
 
@@ -158,7 +158,7 @@ In Section \ref{sec:4-choosable}, an upper bound for the choice number of $1$-ba
 
 Section \ref{sec:k-band-case} extends the results of Section \ref{sec:4-choosable} by deriving the above mentioned upper bound and algorithm. Furthermore, an interesting application is indicated regarding the channel allocation in IEEE 802.11 systems.
 
-Our evaluation concerning the Szekeres\---Wilf number of cellular graphs are drawn in Section \ref{sec:eval}.
+Our evaluation concerning the Szekeres\---Wilf and chromatic number of cellular graphs are drawn in Section \ref{sec:eval}.
 
 \subsection{Problem statement}
 In the age of the Internet of Things, Wireless Local Area Networks (WLANs) have become an essential part of any household, institution and public space. Most of these wireless networks operate in the 2.4GHz (and 5GHz) band using the IEEE 802.11 medium access control (MAC) protocol mostly known under the trademark ''WiFi''. The IEEE 802.11 standard divides this 2.4GHz band into 13 channels (the exact number depends on the specific protocol version and local regulations) with only three non-overlapping channels.
@@ -168,11 +168,17 @@ Transmitting simultaneously using overlapping channels might result in packet co
 \item It is unable to utilize the whole wireless spectrum (i.e. works in a single channel).
 \item In a densely deployed environment, the statistical (exponential backoff) and random methods (contention window technique) work less efficiently.
 \end{itemize} 
-Therefore, the efficient channel allocation in such systems is of great interest to provide best performance in crowded environments. In this thesis, we propose an algorithm that solves the channel allocation problem in IEEE 802.11 networks.
+Therefore, the efficient channel allocation in such systems is of great interest to provide best performance in crowded environments. 
 
 
-\subsection{Literature review}
-Channel allocation problems in wireless networks have been addressed in graph theoretic frameworks by many authors. J. Riihijarvi, M. Petrova and P. Mahonen \cite{marina} defined the term interference graph $G$ where the vertices $V(G):=\lbrace v_1,v_2, \ldots, v_n \rbrace$ are the access points and two vertices $v_i$ and $v_j$ are connected, that is, $(v_i,v_j) \in E(G)$ if and only if their traffic would interfere if they were communicating on the same channel simultaneously. A channel allocation or coloring of this graph is a function $c\colon V(G) \to F$ where $F$ is the available channels (colors) to the access points. A channel allocation (coloring) is called admissible (or proper) if and only if $(v_i,v_j) \in E(G)$ implies $c(v_i) \neq c(v_j)$ for all $i,j \in \lbrace 1, 2, \ldots, |V(G)| \rbrace$. An admissible coloring that minimizes $|c(V)|$ is called optimal, the number of color needed by an optimal coloring is the chromatic number of $G$ denoted by $\chi(G)$. 
+\subsection{State-of-the-art analysis}
+
+In this section, the state-of-the-art analysis is divided into two parts. First, we review the general graph theoretic techniques that do not assume the network topology to be hexagonal. The second part of this literature review deals with such methods that requires the network topology to be hexagonal and exploit this special geometric property.
+
+\subsubsection{General graph theoretic approaches}
+Channel allocation problems in cellular networks have been heavily researched by many authors in graph theoretic settings \cite{marina, 1456167, mishra, wang-liu, orden} to design algorithms in order to achieve interference-free channel allocations or a certain performance criterion. 
+
+J. Riihijarvi, M. Petrova and P. Mahonen \cite{marina} defined the term interference graph $G$ where the vertices $V(G):=\lbrace v_1,v_2, \ldots, v_n \rbrace$ are the access points and two vertices $v_i$ and $v_j$ are connected, that is, $(v_i,v_j) \in E(G)$ if and only if their traffic would interfere if they were communicating on the same channel simultaneously. A channel allocation or coloring of this graph is a function $c\colon V(G) \to F$ where $F$ is the available channels (colors) to the access points. A channel allocation (coloring) is called admissible (or proper) if and only if $(v_i,v_j) \in E(G)$ implies $c(v_i) \neq c(v_j)$ for all $i,j \in \lbrace 1, 2, \ldots, |V(G)| \rbrace$. An admissible coloring that minimizes $|c(V)|$ is called optimal, the number of color needed by an optimal coloring is the chromatic number of $G$ denoted by $\chi(G)$. 
 
 They applied DSATUR algorithm proposed by Brélaz \cite{dsatur} to the problem that constructs an admissible coloring in polynomial time, however, DSATUR only approximates the optimal coloring. The main advantages of this algorithm are that it can be used in a distributed manner and is computationally cheap with a complexity of $O(|V(G)|^2)$. 
 
@@ -204,7 +210,100 @@ An optimal proper weighted coloring of an interference graph $G$ is a proper col
 \end{enumerate}
 Unfortunately, it has been proved that the weighted graph coloring problem is NP-hard and therefore we do not know if there exists a polynomial time algorithm that minimizes the above mentioned objective functions. However, the authors proposed two different distributed, heuristic strategies to minimize (1).
 
-\subsection{How do $k$-band buffering cellular graphs help in network design?}
+W. Wang and X. Liu in \cite{wang-liu} endowed each node in the interference graph $G$ with an additional set representing the available spectrum (i.e. free channels) at the particular location. These sets are subject to time-varying channel availability due to the traffic load variation offered by the users. They abstract the network as an undirected graph $G=(V,E,L)$ where $V$ and $E$ represent the users ($N:=|V|$ is the number of users) and the interference, respectively, similarly to the previous models. $L = \lbrace l_{ik} \rbrace$ is a $N \times K$ matrix which represents the frequency availability where $K$ is the number of available channels in total. If $l_{ik} = 1$ then channel $k$ is available at node $i$ and $l_{ik} = 0$ otherwise. The channel assignment is denoted by the matrix $S = \lbrace s_{ik} \rbrace$ where $s_{ik}$ is either $1$ or $0$ depending on whether channel $k$ has been assigned to node $i$ or not. An assignment is called a feasible assignment if and only if it satisfies the frequency and availability constraints, that is,
+$$s_{ik} \cdot s_{jk} \cdot e_{ij}=0 \quad \text{ for all } i,j=1,\ldots,N \text{ and } k = 1, \ldots, K.$$
+
+They defined an integer non-linear program that has an objective function which maximizes the spectrum utilization:
+
+\begin{equation}\label{eq:list-multicolor}
+\begin{array}{ll@{}ll}
+\text{maximize}  & \displaystyle\sum\limits_{i=1}^{N} \sum\limits_{k=1}^{K} s_{ik} &\\
+\text{subject to}& s_{ik} \leqslant l_{ik}\\
+                 & s_{ik} \cdot s_{jk} \cdot e_{ij}=0 \\
+                 & s_{ik} \in \lbrace 0,1 \rbrace,
+\end{array}
+\end{equation}
+for all $i,j=1,\ldots,N \text{ and } k = 1, \ldots, K.$
+However, solving this linear program is NP-complete and therefore the authors proposed heuristic algorithms: a distributed greedy, distributed fair and a randomized fair algorithm to address the problem. The greedy algorithm achieved nearly optimal spectrum utilization in their simulation setup. However, the approximation constants for the proposed algorithms have not been determined in the paper, and therefore the behaviour of the algorithms remained unknown in arbitrary topologies. 
+
+D. Orden et al. \cite{orden} have recently introduced two novel coloring problems, namely the threshold spectrum coloring (TSC) and the chromatic spectrum coloring (CSC) problem. Their model is defined as follows. Let $G$ be an arbitrary, undirected graph and $S = \lbrace c_1, c_2, \ldots, c_s \rbrace$ the spectrum of colors endowed with an $s \times s$ matrix $W_{ij} := W(c_i,c_j)$ representing the amount of interference between color $i$ and $j$. For such $(G,W,c)$ triples where $c$ is an arbitrary coloring of $G$, the amount of interference induced at node $v$ is defined to be
+$$I_v(G,W,c) := \sum_{u \in N(v)}W(c(u),c(v)),$$
+where $N(v)$ is the neighbour set of $v$.
+
+Given a pair $(G,W)$ and a fixed number of colors $k$, the goal of the threshold spectrum coloring is to determine the smallest non-negative $t \in \mathbb{R}$ such that $(G,W)$ admits a $k$-coloring $c$ and 
+$$I_v(G,W,c) \leqslant t \text{ for all } v \in V(G).$$
+The minimum $t$ is called $k$-chromatic threshold and denoted by $T_k(G,W)$.
+
+The second problem can be considered to be the complementary problem of TSC since it fixes the threshold $t$ and aims to minimize the number of colors $k$. Formally, the $t$-interference chromatic number $\chi_t(G,W)$ is the smallest integer $k \in \lbrace 1,\ldots, |V(G)| \rbrace$ such that $(G,W)$ admits a $\chi_t(G,W)$-coloring $c$ and $I_v(G,W,c) \leqslant t$ for all $v \in V(G)$.
+
+The authors obtained tight upper bounds for both problems.
+
+\begin{theo}[TSC upper bound]
+Let $G$ be a graph endowed with the spectrum $S$ and the interference matrix $W.$ For any $2 \leqslant k \leqslant |S|$, the following bound holds:
+$$T_k(G,W) \leqslant \frac{\Delta(G) \| W \|_{\infty}}{k}.$$
+In addition, the bound is tight.
+\end{theo}
+
+\begin{theo}[CSC upper bound]
+Let $G$ be a graph endowed with the spectrum $S$ $(|S| \geqslant 2)$ and the interference matrix $W.$ For any fixed $t \geqslant 0$ being the multiple of $\gcd(W)$ and such that $|S|t \geqslant \Delta(G) \| W \|_{\infty}$, the following holds:
+$$\chi_t(G,W) \leqslant \left( \frac{\Delta(G) \| W \|_\infty + \gcd(W)}{t + \gcd(W)} \right).$$
+\end{theo}
+
+In addition, they gave a DSATUR-based heuristic (TSC-DSATUR and CSC-DSATUR) for these problems as they are both NP-complete.
+
+\subsubsection{Graph theoretic approaches in hexagonal topologies}\label{sec:hex-topo}
+
+\begin{figure}
+\centering
+\includegraphics[scale=1.2]{figures/hexagonal-topology-wifi.pdf}
+\caption{An IEEE 802.11 network topology idealized as a cellular graph colored with 3 colors. Each color represents a channel used by the access point in the corresponding cell.}\label{fig:hexagonal-topology-wifi}
+\end{figure}
+
+The topology of cellular networks is often modelled by hexagonal tilings of the plane or\---in a graph theoretic framework\---by cellular graphs (see Figure \ref{fig:hexagonal-topology-wifi}). This idealization of real-life cellular networks has been widely used by many researchers \cite{khanna, 7248845, 662943}.
+
+S. Khanna et al. \cite{khanna} introduced the generalized chromatic number $\chi^{\underline{d}}(G)$ of a graph $G$ where $\underline{d}$ is a so-called demand vector. In this coloring problem\---similarly to above-mentioned problems\---no adjacent nodes share the same color such that node $i$ has at least $d_i > 0$ colors for all $i = 1,2,\ldots,|V(G)|$ (note that for $d=(1,1,\ldots,1) \in \mathbb{N}^n$ it is the usual coloring problem). Similarly, the generalized clique can be defined to be 
+$$\omega^{\underline{d}}(G) = \max_{S \in \mathcal{F}}\left( \sum_{i \in S}d_i \right) \quad \text{where } \mathcal{F} \text{ is the set of cliques}.$$
+
+The authors proved that for $1$-band buffering cellular graphs $\chi^{\underline{d}}(G) \leqslant (17/12) \cdot \omega^{\underline{d}}(G)$ while for $2$-band buffering cellular graphs $\chi^{\underline{d}}(G) \leqslant 2 \cdot \omega^{\underline{d}}(G)$.  We would like to note that for the usual coloring problem, this is simply $\chi(G) \leqslant 2 \cdot \omega(G)$ since $\sum_{i \in S}d_i = |S|$.
+
+A. Sen et al. \cite{662943} calculated a lower and upper bound for distance-$k$ chromatic number of cellular graphs:
+
+\begin{theo} The distance-$k$ chromatic number of a cellular graph $G$ is at least
+\[ \begin{cases} 
+      \frac{3}{4} \cdot (k+1)^2 & \text{if $k$ is odd} \\
+      \frac{3}{4} \cdot (k+1)^2 + \frac{1}{4} & \text{if $k$ is even}.
+   \end{cases}
+\]
+\end{theo}
+
+\begin{theo} The distance-$k$ chromatic number of a cellular graph $G$ is at most $k^2 + k + 1.$
+\end{theo}
+
+It can be seen that for $k=1,2$ the bounds coincide and therefore $\chi(G)=3$ and $\chi^2(G)=7$. In addition, it can be concluded that $\chi^k(G) = O(k^2).$ We would like to note that from \cite{khanna}, it only follows that $\chi(G) \leqslant 4$ since $\omega(G)=3$ and thus $\chi^{\underline{d}}(G) \leqslant (17/12) \cdot \omega^{\underline{d}}(G)$ is not tight.
+
+R. Wang et al. \cite{7248845} investigated a similar problem to that of \cite{wang-liu} in a $2$-band buffering hexagonal topology. However, they were interested in calculating the required number of free colors available at each node such that \ref{eq:list-multicolor} is solvable. Formally\---with the notation of \cite{wang-liu}\---they were looking for the numbers $\alpha$ and $\beta$ such that \ref{eq:list-multicolor} admits a solution:
+
+$$\alpha \leqslant \sum^k_{k=1} l_{ik} \leqslant \beta \quad (i = 1,2,\ldots,N).$$
+
+They proved that $\alpha=8$ and $\beta=10$ is a sufficient condition, that is, no matter how the frequency availability $L$ is defined, \ref{eq:list-multicolor} admits at least one solution.
+
+\subsection{Motivation of the thesis}
+In the thesis, we would like to extend the results of \cite{7248845} since\---to the best of our knowledge\---upper bounds for $k$-band buffering case ($k>2$) have not been reported so far. It would be useful to know the number of channels necessary to be able plan networks described in \cite{wang-liu}.
+
+The general observation regarding the above-mentioned methods is that all authors recognized that finding the optimal solution of the channel allocation problem is NP-complete. Therefore most of the papers were organized in the following fashion:
+
+\begin{enumerate}
+\item Definition of the interference graph.
+\item Definition of the problem that slightly modifies the well-known coloring problem by adding more constraints such as weighted coloring, varying color availability, demand vector and interference constraints. However, each variant inherently consists the usual graph coloring problem, which is NP-complete in itself.
+\item Descriptions of various heuristic methods that solves the particular variant of the coloring problem.
+\item Finally, numerical results on comparing the performance of these heuristics and the optimal solution (which was usually computed by some integer linear program in exponential time) in some well-known ''benchmark'' topologies.
+\end{enumerate}
+The general problem with this research methodology that the algorithms' approximation constants were computed through numerical experimentation in the well-known benchmark topology instances which does not guarantee that the algorithms scale in real-world scenarios as well.
+
+In Section \ref{sec:hex-topo}, we tried to collect such papers that aimed to obtain some analytical results in the hexagonal topology where the special geometry can be exploited. 
+
+Our goal is to extend the analytical results for the $k$-band buffering case ($k>2$). In addition, we would like to design such efficient (polynomial time) algorithms that do not use heuristic methods but they always achieve the established bounds. Therefore, the performance is guaranteed in arbitrary hexagonal topologies.
+\subsection{How does the hexagonal case help in general design?}
 In spite of the fact that our upper bound is established for $k$-band buffering cellular graphs, it can help estimating the number of channels needed to create an interference-free channel allocation an in arbitrary wireless topology. 
 
 It is a trivial graph theoretic result that if $H$ is a subgraph of $G$ then $\chi(H) \leqslant \chi(G)$ and thus knowing a chromatic number of a graph helps estimating the chromatic number of the original graph. Since $k$-band buffering graphs model a structure that arises quite often in network topologies, we can estimate the chromatic number and the choice number in arbitrary topologies.
@@ -267,10 +366,14 @@ $$
 $$
 which completes the proof.
 \end{proof}
+\begin{note} Unfortunately, the choice number cannot be bounded by the chromatic number in general, that is, there is no function $f$ such that $\ch(G) \leqslant f(\chi(G))$ for every graph $G$ \cite{GRAVIER1996299}.
+\end{note}
 \begin{note}From now on we assume that all graphs are connected. We can do it without the loss of generality as all the algorithms and proofs can be repeated for each connected component of a graph.\end{note}
 
 \subsection{Degree bounded acyclic orientations of cellular graphs}\label{sec:orientation}
 
+\begin{defin}We say that the directed graph $D=(V,A)$ is acyclic if it does not have directed cycles, that is, it does not contain a sequence of directed edges such that $(v_1,v_2),\ldots,(v_i,v_{i+1}),\ldots,(v_n,v_1) \in A$.
+\end{defin}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -416,6 +519,12 @@ We have proven that cellular graphs are $4$-choosable, hence what is left is to 
 \subsection{Finding a kernel in DAGs}\label{sec:dag}
 
 It has been shown that finding a kernel in an arbitrary graph is $\mathrm{NP}$-complete \cite{chvatal}. However, we will show that in directed acyclic graphs (DAGs) this problem can be easily solved in polynomial time. This is crucial as our $4$-list coloring algorithm has to construct kernels repeatedly at run.
+
+\begin{defin} A topological order of a directed graph $D=(V,A)$ is a linear order of vertices $v_1,v_2,\ldots,v_n \in V$ such that if $(v_i,v_j) \in A$ is a directed edge then $i < j$ in the order.
+\end{defin}
+
+\begin{note} It is a well-known fact that every DAG admits a topological order.
+\end{note}
 
 \begin{lem}\label{lem:kernel-lemma} Let $G$ be a directed acyclic graph. Then a kernel $K \subseteq V(G)$ can be found in polynomial time.
 \end{lem}
@@ -599,8 +708,9 @@ Using this CM, the RF Group Leader (which is a designated access point to mainta
 The general problem with such methods that they try (the whole method is not described in the white paper) optimize the channel utilization in a local neighborhood which might not lead to the global optimum.
 
 However, this CM can be used to identify the free channels (e.g. if they are below some constant) $L(v)$ at each access point $v$. A controller\---which knows the topology of the access points\---whould be able to run Algorithm \ref{alg:szekeres-list-coloring}. In addition, using the concept of graph powering we would be able to require $k$-band buffering interference-free allocations if there are enough channels (i.e. more than the Szekeres\---Wilf number of the access point topology graph).
-\section{Evaluation}\label{sec:eval}
-The aim of this evaluation is to compare our upper bound established in Theorem \ref{theo:extremal-degree} with the Szekeres\---Wilf number of $k$-band buffering cellular graphs. The reason we are interested in the relationship of these two numbers is due to the fact the a graph has Szekeres\---Wilf number of $k$ if and only if it has a $k$-bounded acyclic orientation. One direction has already been proven in Lemma \ref{lem:bounded-acyclic-orientation}. Now, assume that $G$ has $k$-bounded acyclic orientation, we need to prove that if $H$ is a nonempty subgraph of $G$ then $H$ has a node $v$ with $\deg_H(v) \leqslant k$. Since $G$ is a DAG, it has at least one node $v$ with $\deg_{H}^-(v)=0$, however $\deg_{H}^+(v) \leqslant k$ and therefore $\deg_H(v) = \deg_{H}^+(v) + \deg_{H}^-(v) \leqslant k$. This means the we cannot improve Algorithm \ref{alg:szekeres-list-coloring} by constructing better acyclic orientations.
+\section{Computer evaluations}\label{sec:eval}
+\subsection{Computing the Szekeres\---Wilf number}
+The aim of this section is to compare our upper bound established in Theorem \ref{theo:extremal-degree} with the Szekeres\---Wilf number of $k$-band buffering cellular graphs. The reason we are interested in the relationship of these two numbers is due to the fact the a graph has Szekeres\---Wilf number of $k$ if and only if it has a $k$-bounded acyclic orientation. One direction has already been proven in Lemma \ref{lem:bounded-acyclic-orientation}. Now, assume that $G$ has $k$-bounded acyclic orientation, we need to prove that if $H$ is a nonempty subgraph of $G$ then $H$ has a node $v$ with $\deg_H(v) \leqslant k$. Since $G$ is a DAG, it has at least one node $v$ with $\deg_{H}^-(v)=0$, however $\deg_{H}^+(v) \leqslant k$ and therefore $\deg_H(v) = \deg_{H}^+(v) + \deg_{H}^-(v) \leqslant k$. This means the we cannot improve Algorithm \ref{alg:szekeres-list-coloring} by constructing better acyclic orientations.
 
 Another benefit of this equivalence is that it is enough to find one graph where our upper bound equals the Szekeres\---Wilf number and it immediately follows that the bound is sharp.
 \begin{table}[h!]
@@ -614,12 +724,52 @@ Another benefit of this equivalence is that it is enough to find one graph where
  4&  30& 30\\ \hline
  5&  45& 44 \\ \hline
 \end{tabular}
-\caption{The output of Algorithm \ref{alg:szekeres-wilf-computation} implemented as a Java application using a generated $k$-band buffering cellular graph of $3000$ nodes}
+\caption{The output of Algorithm \ref{alg:szekeres-wilf-computation} implemented as a Java application using a generated $k$-band buffering cellular graph of $3000$ nodes.}
 \label{eval-szekeres}
 \end{table}
 
 Table \ref{eval-szekeres} shows that the bound is sharp for $k=1,2,3,4$ and for $5$ they are very close. This result somehow suggest that they might be equal for $k > 4$ using a different generated graph. This would mean that the best attainable list-coloring with Galvin's approach requires at least $3k(k+1)/2+1$ list size.
-\paragraph*{References.} The graph generator source code is available at \url{https://github.com/Benmartin92/thesis-kth} (CellularGraphGenerator.java)).
+
+\subsection{Computing the chromatic number}
+For this section, we generated a smaller instance of hexagonal topology with $500$ access points. We calculated its chromatic number and Szekeres\---Wilf number. Unfortunately, we could not compute the chromatic number of the $3000$-node (see Table \ref{eval-szekeres}) topology since it is computationally very expensive and thus it might be possible there exists $k$-band buffering topologies with higher chromatic number.
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+ $k$& Lower bound: $\begin{cases} 
+      \frac{3}{4} \cdot (k+1)^2 & \text{if $k$ is odd} \\
+     \frac{3}{4} \cdot (k+1)^2 + \frac{1}{4} & \text{if $k$ is even}.
+   \end{cases}$ 
+   & Upper bound: $k^2+k+1$ \\ \hline
+ 1& 3& 3 \\ \hline
+ 2& 7 &7 \\ \hline
+ 3& 12 &13 \\ \hline
+ 4& 19 &21 \\ \hline
+\end{tabular}
+
+\caption{Bounds for the chromatic number of $G^k$ from \cite{662943}.}
+\label{eval-chrom-bounds}
+\end{table}
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{|c|c|c|}
+\hline
+ $k$& $\chi(G^k)$ & Szekeres\---Wilf number \\ \hline
+ 1& 3 &3\ \\ \hline
+ 2&7 & 9\\ \hline
+ 3& 12 &18\\ \hline
+ 4& 19 &28\\ \hline
+\end{tabular}
+
+\caption{Computational results show that the choice number of $G^k$ is indeed between $\chi(G^k)$ and $2 \chi(G^k)$.}
+\label{eval-chrom}
+\end{table}
+Table \ref{eval-chrom-bounds} and \ref{eval-chrom} show the relation between the $\chi(G^k)$ and $\ch(G^k)$. We computationally verified the following analytical result, namely $\chi(G^k) \leqslant \ch(G^k) \leqslant 2 \chi(G^k)$ which can be deduced by simply taking the limit
+$$\lim_{k\to\infty} \frac{3k(k+1)/2+1}{(k+1)^2 + \frac{1}{4}} = 2.$$
+In other words, if every access point has at least $2\chi(G^k)$ free channels then it is always possible to create an interference-free assignment.
+\paragraph*{References.} The graph generator source code is available at \url{https://github.com/Benmartin92/thesis-kth} (CellularGraphGenerator.java)). The Sage program together with the $500$-node graph's adjacency matrix is available at the same repository (adj_matrix.sage).
 \section{Summary and Conclusion}
 The aim of this thesis was to bring together two areas, namely graph theory and telecommunication engineering. We showed that certain cellular topologies arising in telecommunication network design can be modeled using a special graph called $k$-band buffering cellular graph.
 
